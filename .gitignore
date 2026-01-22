@@ -1,3 +1,6 @@
+# Added ignores
+*.zip
+
 # Prerequisites
 *.d
 
