@@ -1,0 +1,8 @@
+*~
+.zipignore
+.gitignore
+*/.gitignore
+*/*.tar.gz
+*/*.o
+*/hello
+*/quadr
