@@ -12,7 +12,7 @@ upcase_words(const char in[], char out[])
 {
   int inWord = 0;
   int n = strlen(in);
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i <= n; i++) {
     if (!inWord && isalpha(in[i])) {
       out[i] = toupper(in[i]);
     }
@@ -39,7 +39,7 @@ main(int argc, const char *argv[])
   else {
     for (int i = 1; i < argc; i++) {
       const char *name = argv[i];
-      char friendlyName[strlen(name)];
+      char friendlyName[strlen(name)-1];
       upcase_words(name, friendlyName);
       say_hello(friendlyName);
     }

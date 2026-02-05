@@ -1,0 +1,44 @@
++start 'lisa  simpson' 'bart simpson'
+Temporary breakpoint 1 at 0x12c6: file hello.c, line 35.
+Starting program: /import/home/hbizier/i220/submit/lab2-sol/2-hello-upcase-args/hello 'lisa  simpson' 'bart simpson'
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 1, main (argc=3, argv=0x7fffffffdfb8) at hello.c:35
+35	  if (argc == 1) {
++display name
+1: name = '\000' <repeats 32 times>
++c
+Continuing.
+[Inferior 1 (process 709587) exited normally]
++b upcase_words
+Breakpoint 2 at 0x555555555199: file hello.c, line 13.
++display in
+No symbol "in" in current context.
++start 'lisa  simpson' 'bart simpson'
+Temporary breakpoint 3 at 0x5555555552c6: file hello.c, line 35.
+Starting program: /import/home/hbizier/i220/submit/lab2-sol/2-hello-upcase-args/hello 'lisa  simpson' 'bart simpson'
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 3, main (argc=3, argv=0x7fffffffdfb8) at hello.c:35
+35	  if (argc == 1) {
+1: name = '\000' <repeats 32 times>
++c
+Continuing.
+
+Breakpoint 2, upcase_words (in=0x7fffffffe2a5 "lisa  simpson", out=0x7fffffffde30 "\001") at hello.c:13
+13	  int inWord = 0;
+1: name = '\000' <repeats 32 times>
++c
+Continuing.
+
+Breakpoint 2, upcase_words (in=0x7fffffffe2b3 "bart simpson", out=0x7fffffffde30 "Lisa  Si4SUUUU") at hello.c:13
+13	  int inWord = 0;
+1: name = '\000' <repeats 32 times>
++c
+Continuing.
+[Inferior 1 (process 710731) exited normally]
++c
+The program is not being run.
++q

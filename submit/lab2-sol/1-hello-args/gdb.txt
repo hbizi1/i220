@@ -1,0 +1,80 @@
++start bart lisa
+Temporary breakpoint 1 at 0x1192: file hello.c, line 17.
+Starting program: /import/home/hbizier/i220/submit/lab2-sol/1-hello-args/hello bart lisa
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 1, main (argc=3, argv=0x7fffffffdfe8) at hello.c:17
+17	  if ((argc = 1)) {
++frame
+#0  main (argc=3, argv=0x7fffffffdfe8) at hello.c:17
+17	  if ((argc = 1)) {
++p argc
+$1 = 3
++n
+18	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
++p argc
+$2 = 1
++q
++start bart lisa
+Temporary breakpoint 1 at 0x1192: file hello.c, line 17.
+Starting program: /import/home/hbizier/i220/submit/lab2-sol/1-hello-args/hello bart lisa
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 1, main (argc=3, argv=0x7fffffffdfe8) at hello.c:17
+17	  if ((argc == 1)) {
++b say_hello
+Breakpoint 2 at 0x555555555165: file hello.c, line 7.
++c
+Continuing.
+
+Breakpoint 2, say_hello (name=0x7fffffffe290 "/import/home/hbizier/i220/submit/lab2-sol/1-hello-args/hello") at hello.c:7
+7	  printf("hello %s\n", name);
++p name
+$1 = 0x7fffffffe290 "/import/home/hbizier/i220/submit/lab2-sol/1-hello-args/hello"
++backtrace
+#0  say_hello (name=0x7fffffffe290 "/import/home/hbizier/i220/submit/lab2-sol/1-hello-args/hello") at hello.c:7
+#1  0x00005555555551ef in main (argc=3, argv=0x7fffffffdfe8) at hello.c:23
++up
+#1  0x00005555555551ef in main (argc=3, argv=0x7fffffffdfe8) at hello.c:23
+23	      say_hello(argv[i]);
++p name
+$2 = '\000' <repeats 32 times>
++p argc
+$3 = 3
++p argv
+$4 = (const char **) 0x7fffffffdfe8
++p i
+$5 = 0
++p down
+No symbol "down" in current context.
++p name
+$6 = '\000' <repeats 32 times>
++down
+#0  say_hello (name=0x7fffffffe290 "/import/home/hbizier/i220/submit/lab2-sol/1-hello-args/hello") at hello.c:7
+7	  printf("hello %s\n", name);
++p name
+$7 = 0x7fffffffe290 "/import/home/hbizier/i220/submit/lab2-sol/1-hello-args/hello"
++c
+Continuing.
+
+Breakpoint 2, say_hello (name=0x7fffffffe2cd "bart") at hello.c:7
+7	  printf("hello %s\n", name);
++p name
+$8 = 0x7fffffffe2cd "bart"
++display name
+1: name = 0x7fffffffe2cd "bart"
++c
+Continuing.
+
+Breakpoint 2, say_hello (name=0x7fffffffe2d2 "lisa") at hello.c:7
+7	  printf("hello %s\n", name);
+1: name = 0x7fffffffe2d2 "lisa"
++c
+Continuing.
+
+Breakpoint 2, say_hello (name=0x0) at hello.c:7
+7	  printf("hello %s\n", name);
+1: name = 0x0
++q
