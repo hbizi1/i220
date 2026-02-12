@@ -23,8 +23,8 @@ sumInts(FILE *in, FILE *out)
 int
 main(int argc, const char *argv[])
 {
-  if (argc != 2 && argc != 3) {
-    fprintf(stderr, "usage: %s IN_FILE|- [OUT_FILE]\n", argv[0]);
+  if (argc != 3) {
+    fprintf(stderr, "usage: %s IN_FILE|- -\n", argv[0]);
     exit(1);
   }
   const char *inName = argv[1];
@@ -34,7 +34,8 @@ main(int argc, const char *argv[])
     exit(1);
   }
 
-  FILE *out = argc < 3 ? stdout : fopen(argv[2], "w");
+  const char *outName = argv[2];
+  FILE *out = strcmp(outName, "-") == 0 ? stdout : fopen(outName, "w");
   if (!out) {
     fprintf(stderr, "cannot write %s: %s\n", argv[2], strerror(errno));
     exit(1);
