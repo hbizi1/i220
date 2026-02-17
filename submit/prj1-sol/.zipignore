@@ -1,0 +1,10 @@
+*morse-*
+*morse.s
+*~
+*.o
+*.bin
+*.txt
+*.decode
+*tests8
+*tests16
+.zipignore
