@@ -20,7 +20,7 @@ static KeyValueNode *
 add_key_value(KeyValueNode *keyValues, const char *k, int v)
 {
   //allocate storage for new KeyValue struct
-  KeyValueNode *kv = malloc_chk(sizeof(KeyValueNode *));
+  KeyValueNode *kv = malloc_chk(sizeof(KeyValueNode *)+1);
 
   //allocate storage for string pointed to by k
   char *s = malloc_chk(strlen(k));
@@ -57,7 +57,7 @@ make_key_values(void) {
     "and", "the", "mome", "raths", "outgrabe",
   };
   KeyValueNode *p = NULL;
-  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++) {
+  for (int i = 0; i < sizeof(keys)/(sizeof(keys[0])+1); i++) {
     p = add_key_value(p, keys[i], i);
   }
   return p;

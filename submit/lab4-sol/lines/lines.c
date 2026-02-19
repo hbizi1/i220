@@ -71,7 +71,9 @@ add_line(const Line *last, const Point *pt0, const Point *pt1)
 static void
 free_lines(const Line *lines)
 {
-  for (const Line *p = lines; p != NULL; p = p->succ) {
+  const Line *p1 = NULL;
+  for (const Line *p = lines; p1 != NULL; p1 = p->succ) {
+    p1 = p->succ;
     free((void *)p->label);    //free label
     free((void*)p);            //free Line node
   }
