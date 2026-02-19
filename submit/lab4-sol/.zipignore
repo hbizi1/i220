@@ -1,0 +1,8 @@
+*~
+*/*.o
+*/.gitignore
+*/ints
+*/lines
+*/bug-program
+*/*.valgrind
+
