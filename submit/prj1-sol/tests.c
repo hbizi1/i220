@@ -312,16 +312,16 @@ main(void)
 
   is_verbose_unit_test = 1;
 
-  // byte_bit_mask_tests();
-  // get_log2_power_of_2_tests();
-  // get_bit_index_tests();
-  // get_byte_offset_tests();
-  // get_bit_at_offset_tests();
-  // set_bit_at_offset_tests();
-  // set_bits_at_offset_tests();
-  // run_length_tests();
+  byte_bit_mask_tests();
+  get_log2_power_of_2_tests();
+  get_bit_index_tests();
+  get_byte_offset_tests();
+  get_bit_at_offset_tests();
+  set_bit_at_offset_tests();
+  set_bits_at_offset_tests();
+  run_length_tests();
 
-  // text_to_morse_sos_test();
+  text_to_morse_sos_test();
   // morse_to_text_sos_test();
 
   return n_fails_unit_test;
