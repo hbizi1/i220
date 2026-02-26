@@ -1,0 +1,137 @@
++start joe
+Temporary breakpoint 1 at 0x118a: file hello.c, line 16.
+Starting program: /import/home/hbizier/i220/submit/lab5-sol/hello joe
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 1, main (argc=2, argv=0x7fffffffdff8) at hello.c:16
+16	  if (argc == 1) {
++disas /s
+Dump of assembler code for function main:
+hello.c:
+15	{
+   0x000055555555517b <+0>:	push   %rbp
+   0x000055555555517c <+1>:	mov    %rsp,%rbp
+   0x000055555555517f <+4>:	sub    $0x20,%rsp
+   0x0000555555555183 <+8>:	mov    %edi,-0x14(%rbp)
+   0x0000555555555186 <+11>:	mov    %rsi,-0x20(%rbp)
+
+16	  if (argc == 1) {
+=> 0x000055555555518a <+15>:	cmpl   $0x1,-0x14(%rbp)
+   0x000055555555518e <+19>:	jne    0x5555555551bf <main+68>
+
+17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+   0x0000555555555190 <+21>:	mov    -0x20(%rbp),%rax
+   0x0000555555555194 <+25>:	mov    (%rax),%rdx
+   0x0000555555555197 <+28>:	mov    0x2ea2(%rip),%rax        # 0x555555558040 <stderr@GLIBC_2.2.5>
+   0x000055555555519e <+35>:	lea    0xe69(%rip),%rcx        # 0x55555555600e
+   0x00005555555551a5 <+42>:	mov    %rcx,%rsi
+   0x00005555555551a8 <+45>:	mov    %rax,%rdi
+   0x00005555555551ab <+48>:	mov    $0x0,%eax
+   0x00005555555551b0 <+53>:	call   0x555555555030 <fprintf@plt>
+
+18	    exit(0xdeadbeef);
+   0x00005555555551b5 <+58>:	mov    $0xdeadbeef,%edi
+   0x00005555555551ba <+63>:	call   0x555555555040 <exit@plt>
+
+19	  }
+20	  for (int i = 1; i < argc; i++) {
+   0x00005555555551bf <+68>:	movl   $0x1,-0x4(%rbp)
+   0x00005555555551c6 <+75>:	jmp    0x5555555551f5 <main+122>
+
+21	    hello(stdout, argv[i]);
+   0x00005555555551c8 <+77>:	mov    -0x4(%rbp),%eax
+   0x00005555555551cb <+80>:	cltq
+   0x00005555555551cd <+82>:	lea    0x0(,%rax,8),%rdx
+   0x00005555555551d5 <+90>:	mov    -0x20(%rbp),%rax
+   0x00005555555551d9 <+94>:	add    %rdx,%rax
+   0x00005555555551dc <+97>:	mov    (%rax),%rdx
+   0x00005555555551df <+100>:	mov    0x2e3a(%rip),%rax        # 0x555555558020 <stdout@GLIBC_2.2.5>
+   0x00005555555551e6 <+107>:	mov    %rdx,%rsi
+   0x00005555555551e9 <+110>:	mov    %rax,%rdi
+   0x00005555555551ec <+113>:	call   0x555555555149 <hello>
+
+20	  for (int i = 1; i < argc; i++) {
+   0x00005555555551f1 <+118>:	addl   $0x1,-0x4(%rbp)
+   0x00005555555551f5 <+122>:	mov    -0x4(%rbp),%eax
+   0x00005555555551f8 <+125>:	cmp    -0x14(%rbp),%eax
+   0x00005555555551fb <+128>:	jl     0x5555555551c8 <main+77>
+
+22	  }
+23	  return 0;
+   0x00005555555551fd <+130>:	mov    $0x0,%eax
+
+24	}
+   0x0000555555555202 <+135>:	leave
+   0x0000555555555203 <+136>:	ret
+End of assembler dump.
++b *0x00005555555551f8
+Breakpoint 2 at 0x5555555551f8: file hello.c, line 20.
++display /i $pc
+1: x/i $pc
+=> 0x55555555518a <main+15>:	cmpl   $0x1,-0x14(%rbp)
++c
+Continuing.
+
+Breakpoint 2, 0x00005555555551f8 in main (argc=2, argv=0x7fffffffdff8) at hello.c:20
+20	  for (int i = 1; i < argc; i++) {
+1: x/i $pc
+=> 0x5555555551f8 <main+125>:	cmp    -0x14(%rbp),%eax
++p i
+$1 = 1
++c
+Continuing.
+
+Breakpoint 2, 0x00005555555551f8 in main (argc=2, argv=0x7fffffffdff8) at hello.c:20
+20	  for (int i = 1; i < argc; i++) {
+1: x/i $pc
+=> 0x5555555551f8 <main+125>:	cmp    -0x14(%rbp),%eax
++p i
+$2 = 2
++i reg
+rax            0x2                 2
+rbx            0x7fffffffdff8      140737488347128
+rcx            0x0                 0
+rdx            0x0                 0
+rsi            0x5555555592a0      93824992252576
+rdi            0x7fffffffd940      140737488345408
+rbp            0x7fffffffdee0      0x7fffffffdee0
+rsp            0x7fffffffdec0      0x7fffffffdec0
+r8             0x55555557a000      93824992387072
+r9             0x73                115
+r10            0x0                 0
+r11            0x202               514
+r12            0x0                 0
+r13            0x7fffffffe010      140737488347152
+r14            0x555555557dd8      93824992247256
+r15            0x7ffff7ffd020      140737354125344
+rip            0x5555555551f8      0x5555555551f8 <main+125>
+eflags         0x202               [ IF ]
+cs             0x33                51
+ss             0x2b                43
+ds             0x0                 0
+es             0x0                 0
+fs             0x0                 0
+gs             0x0                 0
+k0             0x0                 0
+k1             0x0                 0
+k2             0x0                 0
+k3             0x0                 0
+k4             0x0                 0
+k5             0x0                 0
+k6             0x0                 0
+k7             0x0                 0
++set $rax = $rax-1
++c
+Continuing.
+
+Breakpoint 2, 0x00005555555551f8 in main (argc=2, argv=0x7fffffffdff8) at hello.c:20
+20	  for (int i = 1; i < argc; i++) {
+1: x/i $pc
+=> 0x5555555551f8 <main+125>:	cmp    -0x14(%rbp),%eax
++q
+Not confirmed.
++c
+Continuing.
+[Inferior 1 (process 536636) exited normally]
++q

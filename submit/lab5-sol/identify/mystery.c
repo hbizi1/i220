@@ -4,6 +4,6 @@
 unsigned int
 mystery(unsigned int v)
 {
-  enum { MASK = 0x0 }; //TODO
+  enum { MASK = 0x7fffff };
   return v & MASK;
 }

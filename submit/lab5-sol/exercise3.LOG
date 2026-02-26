@@ -1,0 +1,196 @@
++start
+Temporary breakpoint 1 at 0x118a: file hello.c, line 16.
+Starting program: /import/home/hbizier/i220/submit/lab5-sol/hello 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 1, main (argc=1, argv=0x7fffffffe018) at hello.c:16
+16	  if (argc == 1) {
++disas /s
+Dump of assembler code for function main:
+hello.c:
+15	{
+   0x000055555555517b <+0>:	push   %rbp
+   0x000055555555517c <+1>:	mov    %rsp,%rbp
+   0x000055555555517f <+4>:	sub    $0x20,%rsp
+   0x0000555555555183 <+8>:	mov    %edi,-0x14(%rbp)
+   0x0000555555555186 <+11>:	mov    %rsi,-0x20(%rbp)
+
+16	  if (argc == 1) {
+=> 0x000055555555518a <+15>:	cmpl   $0x1,-0x14(%rbp)
+   0x000055555555518e <+19>:	jne    0x5555555551bf <main+68>
+
+17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+   0x0000555555555190 <+21>:	mov    -0x20(%rbp),%rax
+   0x0000555555555194 <+25>:	mov    (%rax),%rdx
+   0x0000555555555197 <+28>:	mov    0x2ea2(%rip),%rax        # 0x555555558040 <stderr@GLIBC_2.2.5>
+   0x000055555555519e <+35>:	lea    0xe69(%rip),%rcx        # 0x55555555600e
+   0x00005555555551a5 <+42>:	mov    %rcx,%rsi
+   0x00005555555551a8 <+45>:	mov    %rax,%rdi
+   0x00005555555551ab <+48>:	mov    $0x0,%eax
+   0x00005555555551b0 <+53>:	call   0x555555555030 <fprintf@plt>
+
+18	    exit(0xdeadbeef);
+   0x00005555555551b5 <+58>:	mov    $0xdeadbeef,%edi
+   0x00005555555551ba <+63>:	call   0x555555555040 <exit@plt>
+
+19	  }
+20	  for (int i = 1; i < argc; i++) {
+   0x00005555555551bf <+68>:	movl   $0x1,-0x4(%rbp)
+   0x00005555555551c6 <+75>:	jmp    0x5555555551f5 <main+122>
+
+21	    hello(stdout, argv[i]);
+   0x00005555555551c8 <+77>:	mov    -0x4(%rbp),%eax
+   0x00005555555551cb <+80>:	cltq
+   0x00005555555551cd <+82>:	lea    0x0(,%rax,8),%rdx
+   0x00005555555551d5 <+90>:	mov    -0x20(%rbp),%rax
+   0x00005555555551d9 <+94>:	add    %rdx,%rax
+   0x00005555555551dc <+97>:	mov    (%rax),%rdx
+   0x00005555555551df <+100>:	mov    0x2e3a(%rip),%rax        # 0x555555558020 <stdout@GLIBC_2.2.5>
+   0x00005555555551e6 <+107>:	mov    %rdx,%rsi
+   0x00005555555551e9 <+110>:	mov    %rax,%rdi
+   0x00005555555551ec <+113>:	call   0x555555555149 <hello>
+
+20	  for (int i = 1; i < argc; i++) {
+   0x00005555555551f1 <+118>:	addl   $0x1,-0x4(%rbp)
+   0x00005555555551f5 <+122>:	mov    -0x4(%rbp),%eax
+   0x00005555555551f8 <+125>:	cmp    -0x14(%rbp),%eax
+   0x00005555555551fb <+128>:	jl     0x5555555551c8 <main+77>
+
+22	  }
+23	  return 0;
+   0x00005555555551fd <+130>:	mov    $0x0,%eax
+
+24	}
+   0x0000555555555202 <+135>:	leave
+   0x0000555555555203 <+136>:	ret
+End of assembler dump.
++i reg
+rax            0x55555555517b      93824992235899
+rbx            0x7fffffffe018      140737488347160
+rcx            0x555555557dd8      93824992247256
+rdx            0x7fffffffe028      140737488347176
+rsi            0x7fffffffe018      140737488347160
+rdi            0x1                 1
+rbp            0x7fffffffdf00      0x7fffffffdf00
+rsp            0x7fffffffdee0      0x7fffffffdee0
+r8             0x0                 0
+r9             0x7ffff7fce680      140737353934464
+r10            0x7ffff7fca878      140737353918584
+r11            0x7ffff7fe0a10      140737354009104
+r12            0x0                 0
+r13            0x7fffffffe028      140737488347176
+r14            0x555555557dd8      93824992247256
+r15            0x7ffff7ffd020      140737354125344
+rip            0x55555555518a      0x55555555518a <main+15>
+eflags         0x202               [ IF ]
+cs             0x33                51
+ss             0x2b                43
+ds             0x0                 0
+es             0x0                 0
+fs             0x0                 0
+gs             0x0                 0
+k0             0x0                 0
+k1             0x0                 0
+k2             0x0                 0
+k3             0x0                 0
+k4             0x0                 0
+k5             0x0                 0
+k6             0x0                 0
+k7             0x0                 0
++p argc
+$1 = 1
++p *($rbp - 20)
+Attempt to dereference a generic pointer.
++p *(int *)($rbp - 20)
+$2 = 1
++p argv
+$3 = (const char **) 0x7fffffffe018
++p *(const char ***)($rbp - 32)
+$4 = (const char **) 0x7fffffffe018
++p argv[0]
+$5 = 0x7fffffffe2b1 "/import/home/hbizier/i220/submit/lab5-sol/hello"
++p (*(const char ***)($rbp - 0x20))[0]
+$6 = 0x7fffffffe2b1 "/import/home/hbizier/i220/submit/lab5-sol/hello"
++display /i *$pc
+1: x/i *$pc
+=> 0x55555555518a <main+15>:	cmpl   $0x1,-0x14(%rbp)
++p $eflags
+$7 = [ IF ]
++ni
+0x000055555555518e	16	  if (argc == 1) {
+1: x/i *$pc
+=> 0x55555555518e <main+19>:	jne    0x5555555551bf <main+68>
++p $eflags
+$8 = [ PF ZF IF ]
++ni
+17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+1: x/i *$pc
+=> 0x555555555190 <main+21>:	mov    -0x20(%rbp),%rax
++ni
+0x0000555555555194	17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+1: x/i *$pc
+=> 0x555555555194 <main+25>:	mov    (%rax),%rdx
++ni
+0x0000555555555197	17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+1: x/i *$pc
+=> 0x555555555197 <main+28>:	mov    0x2ea2(%rip),%rax        # 0x555555558040 <stderr@GLIBC_2.2.5>
++ni
+0x000055555555519e	17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+1: x/i *$pc
+=> 0x55555555519e <main+35>:	lea    0xe69(%rip),%rcx        # 0x55555555600e
++ni
+0x00005555555551a5	17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+1: x/i *$pc
+=> 0x5555555551a5 <main+42>:	mov    %rcx,%rsi
++ni
+0x00005555555551a8	17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+1: x/i *$pc
+=> 0x5555555551a8 <main+45>:	mov    %rax,%rdi
++ni
+0x00005555555551ab	17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+1: x/i *$pc
+=> 0x5555555551ab <main+48>:	mov    $0x0,%eax
++ni
+0x00005555555551b0	17	    fprintf(stderr, "usage: %s NAME...\n", argv[0]);
+1: x/i *$pc
+=> 0x5555555551b0 <main+53>:	call   0x555555555030 <fprintf@plt>
++p (const char *)($rsi)
+$9 = 0x55555555600e "usage: %s NAME...\n"
++p (const char *)($rdx)
+$10 = 0x7fffffffe2b1 "/import/home/hbizier/i220/submit/lab5-sol/hello"
++ni
+18	    exit(0xdeadbeef);
+1: x/i *$pc
+=> 0x5555555551b5 <main+58>:	mov    $0xdeadbeef,%edi
++ni
+0x00005555555551ba	18	    exit(0xdeadbeef);
+1: x/i *$pc
+=> 0x5555555551ba <main+63>:	call   0x555555555040 <exit@plt>
++ni
+[Inferior 1 (process 535132) exited with code 0357]
++start joe
+Temporary breakpoint 2 at 0x55555555518a: file hello.c, line 16.
+Starting program: /import/home/hbizier/i220/submit/lab5-sol/hello joe
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 2, main (argc=2, argv=0x7fffffffdff8) at hello.c:16
+16	  if (argc == 1) {
+1: x/i *$pc
+=> 0x55555555518a <main+15>:	cmpl   $0x1,-0x14(%rbp)
++b hello
+Breakpoint 3 at 0x555555555159: file hello.c, line 8.
++c
+Continuing.
+
+Breakpoint 3, hello (out=0x7ffff7f8c760 <_IO_2_1_stdout_>, who=0x7fffffffe2dd "joe") at hello.c:8
+8	  fprintf(out, "hello %s\n", who);
+1: x/i *$pc
+=> 0x555555555159 <hello+16>:	mov    -0x10(%rbp),%rdx
++p (const char *)($rsi)
+$11 = 0x7fffffffe2dd "joe"
++c
+Continuing.
+[Inferior 1 (process 535998) exited normally]
++q
