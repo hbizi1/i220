@@ -1,0 +1,11 @@
+*~
+*cookie-wrapper.h
+*feed-cookie-monster.c
+*gen-cookie
+*Makefile
+*/cookie-wrapper.obj
+*/*.o
+*/feed-cookie-monster
+.gitignore
+.zipignore
+
