@@ -5,7 +5,7 @@ CFLAGS = -g -Wall -std=c2x
 LDFLAGS =
 
 # this is the standard make variable to specify needed libraries using -l
-LDLIBS = 
+LDLIBS = -lm
 
 log10:		log10.o
 

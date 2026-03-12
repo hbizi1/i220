@@ -1,0 +1,11 @@
+w_log10.o:
+                 U errno
+                 U _GLOBAL_OFFSET_TABLE_
+                 U __ieee754_log10
+0000000000000000 T __log10
+0000000000000000 W log10
+0000000000000000 W log10f32x
+0000000000000000 W log10f64
+
+w_log2.o:
+
