@@ -1,0 +1,8 @@
+*~
+*/*.nm
+*/*.o
+*/log10
+*/multiple-defs
+*/multiple-symbols
+*/hello
+
