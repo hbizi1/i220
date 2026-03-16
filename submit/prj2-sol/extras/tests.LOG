@@ -1,0 +1,477 @@
+gcc -c -g -Wall -I $HOME/cs220/include -DBCD_BASE=0 bcd-tests.c -o bcd-tests-0.o
+gcc -c -g -Wall -I $HOME/cs220/include -DBCD_BASE=0 bcd.c -o bcd-0.o
+gcc bcd-tests-0.o bcd-0.o -o bcd-tests-0
+./bcd-tests-0
+utest: bcd-tests.c:176: zero: binary_to_bcd(0) value ... OK
+utest: bcd-tests.c:180: zero NO_ERR: binary_to_bcd(0) ... OK
+utest: bcd-tests.c:176: consecutive: binary_to_bcd(12) value ... OK
+utest: bcd-tests.c:180: consecutive NO_ERR: binary_to_bcd(12) ... OK
+utest: bcd-tests.c:176: max: binary_to_bcd(99) value ... OK
+utest: bcd-tests.c:180: max NO_ERR: binary_to_bcd(99) ... OK
+utest: bcd-tests.c:176: max - 2: binary_to_bcd(98) value ... OK
+utest: bcd-tests.c:180: max - 2 NO_ERR: binary_to_bcd(98) ... OK
+utest: bcd-tests.c:176: max - 4: binary_to_bcd(95) value ... OK
+utest: bcd-tests.c:180: max - 4 NO_ERR: binary_to_bcd(95) ... OK
+utest: bcd-tests.c:176: maxHalfTrunc: binary_to_bcd(49) value ... OK
+utest: bcd-tests.c:180: maxHalfTrunc NO_ERR: binary_to_bcd(49) ... OK
+utest: bcd-tests.c:176: maxHalfRound: binary_to_bcd(50) value ... OK
+utest: bcd-tests.c:180: maxHalfRound NO_ERR: binary_to_bcd(50) ... OK
+utest: bcd-tests.c:190: OVERFLOW_ERR: binary_to_bcd(100) ... OK
+utest: bcd-tests.c:208: zero: bcd_to_binary(0x0) value ... OK
+utest: bcd-tests.c:212: zero NO_ERR: bcd_to_binary(0x0) ... OK
+utest: bcd-tests.c:208: consecutive: bcd_to_binary(0x12) value ... OK
+utest: bcd-tests.c:212: consecutive NO_ERR: bcd_to_binary(0x12) ... OK
+utest: bcd-tests.c:208: max: bcd_to_binary(0x99) value ... OK
+utest: bcd-tests.c:212: max NO_ERR: bcd_to_binary(0x99) ... OK
+utest: bcd-tests.c:208: max - 2: bcd_to_binary(0x98) value ... OK
+utest: bcd-tests.c:212: max - 2 NO_ERR: bcd_to_binary(0x98) ... OK
+utest: bcd-tests.c:208: max - 4: bcd_to_binary(0x95) value ... OK
+utest: bcd-tests.c:212: max - 4 NO_ERR: bcd_to_binary(0x95) ... OK
+utest: bcd-tests.c:208: maxHalfTrunc: bcd_to_binary(0x49) value ... OK
+utest: bcd-tests.c:212: maxHalfTrunc NO_ERR: bcd_to_binary(0x49) ... OK
+utest: bcd-tests.c:208: maxHalfRound: bcd_to_binary(0x50) value ... OK
+utest: bcd-tests.c:212: maxHalfRound NO_ERR: bcd_to_binary(0x50) ... OK
+utest: bcd-tests.c:221: BAD_VALUE_ERR: bcd_to_binary(0x6a) ... OK
+utest: bcd-tests.c:238: zero: str_to_bcd("0") value ... OK
+utest: bcd-tests.c:242: zero NO_ERR: binary_to_bcd("0") ... OK
+utest: bcd-tests.c:249: zero: str_to_bcd("0") left-over char '\0' ... OK
+utest: bcd-tests.c:238: consecutive: str_to_bcd("12") value ... OK
+utest: bcd-tests.c:242: consecutive NO_ERR: binary_to_bcd("12") ... OK
+utest: bcd-tests.c:249: consecutive: str_to_bcd("12") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max: str_to_bcd("99") value ... OK
+utest: bcd-tests.c:242: max NO_ERR: binary_to_bcd("99") ... OK
+utest: bcd-tests.c:249: max: str_to_bcd("99") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max - 2: str_to_bcd("98") value ... OK
+utest: bcd-tests.c:242: max - 2 NO_ERR: binary_to_bcd("98") ... OK
+utest: bcd-tests.c:249: max - 2: str_to_bcd("98") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max - 4: str_to_bcd("95") value ... OK
+utest: bcd-tests.c:242: max - 4 NO_ERR: binary_to_bcd("95") ... OK
+utest: bcd-tests.c:249: max - 4: str_to_bcd("95") left-over char '\0' ... OK
+utest: bcd-tests.c:238: maxHalfTrunc: str_to_bcd("49") value ... OK
+utest: bcd-tests.c:242: maxHalfTrunc NO_ERR: binary_to_bcd("49") ... OK
+utest: bcd-tests.c:249: maxHalfTrunc: str_to_bcd("49") left-over char '\0' ... OK
+utest: bcd-tests.c:238: maxHalfRound: str_to_bcd("50") value ... OK
+utest: bcd-tests.c:242: maxHalfRound NO_ERR: binary_to_bcd("50") ... OK
+utest: bcd-tests.c:249: maxHalfRound: str_to_bcd("50") left-over char '\0' ... OK
+utest: bcd-tests.c:265: zero: str_to_bcd("0") left-over char 'a' ... OK
+utest: bcd-tests.c:265: consecutive: str_to_bcd("12") left-over char 'b' ... OK
+utest: bcd-tests.c:265: max: str_to_bcd("99") left-over char 'c' ... OK
+utest: bcd-tests.c:265: max - 2: str_to_bcd("98") left-over char 'd' ... OK
+utest: bcd-tests.c:265: max - 4: str_to_bcd("95") left-over char 'e' ... OK
+utest: bcd-tests.c:265: maxHalfTrunc: str_to_bcd("49") left-over char 'f' ... OK
+utest: bcd-tests.c:265: maxHalfRound: str_to_bcd("50") left-over char 'g' ... OK
+utest: bcd-tests.c:277: OVERFLOW_ERR: str_to_bcd("111") ... OK
+utest: bcd-tests.c:296: zero: bcd_to_str(0x0) value ... OK
+utest: bcd-tests.c:302: zero NO_ERR: bcd_to_str(0x0) ... OK
+utest: bcd-tests.c:296: consecutive: bcd_to_str(0x12) value ... OK
+utest: bcd-tests.c:302: consecutive NO_ERR: bcd_to_str(0x12) ... OK
+utest: bcd-tests.c:296: max: bcd_to_str(0x99) value ... OK
+utest: bcd-tests.c:302: max NO_ERR: bcd_to_str(0x99) ... OK
+utest: bcd-tests.c:296: max - 2: bcd_to_str(0x98) value ... OK
+utest: bcd-tests.c:302: max - 2 NO_ERR: bcd_to_str(0x98) ... OK
+utest: bcd-tests.c:296: max - 4: bcd_to_str(0x95) value ... OK
+utest: bcd-tests.c:302: max - 4 NO_ERR: bcd_to_str(0x95) ... OK
+utest: bcd-tests.c:296: maxHalfTrunc: bcd_to_str(0x49) value ... OK
+utest: bcd-tests.c:302: maxHalfTrunc NO_ERR: bcd_to_str(0x49) ... OK
+utest: bcd-tests.c:296: maxHalfRound: bcd_to_str(0x50) value ... OK
+utest: bcd-tests.c:302: maxHalfRound NO_ERR: bcd_to_str(0x50) ... OK
+utest: bcd-tests.c:315: zero OVERFLOW_ERR: bcd_to_str(0x0) value ... OK
+utest: bcd-tests.c:319: zero size: bcd_to_str(0x0) ... OK
+utest: bcd-tests.c:315: consecutive OVERFLOW_ERR: bcd_to_str(0x12) value ... OK
+utest: bcd-tests.c:319: consecutive size: bcd_to_str(0x12) ... OK
+utest: bcd-tests.c:315: max OVERFLOW_ERR: bcd_to_str(0x99) value ... OK
+utest: bcd-tests.c:319: max size: bcd_to_str(0x99) ... OK
+utest: bcd-tests.c:315: max - 2 OVERFLOW_ERR: bcd_to_str(0x98) value ... OK
+utest: bcd-tests.c:319: max - 2 size: bcd_to_str(0x98) ... OK
+utest: bcd-tests.c:315: max - 4 OVERFLOW_ERR: bcd_to_str(0x95) value ... OK
+utest: bcd-tests.c:319: max - 4 size: bcd_to_str(0x95) ... OK
+utest: bcd-tests.c:315: maxHalfTrunc OVERFLOW_ERR: bcd_to_str(0x49) value ... OK
+utest: bcd-tests.c:319: maxHalfTrunc size: bcd_to_str(0x49) ... OK
+utest: bcd-tests.c:315: maxHalfRound OVERFLOW_ERR: bcd_to_str(0x50) value ... OK
+utest: bcd-tests.c:319: maxHalfRound size: bcd_to_str(0x50) ... OK
+utest: bcd-tests.c:328: BAD_VALUE_ERR: bcd_to_str(0x6a) ... OK
+utest: bcd-tests.c:352: inc-consecutive: bcd_add(0x12, 0x1) ... OK
+utest: bcd-tests.c:357: error bcd_add(0x12, 0x1) ... OK
+utest: bcd-tests.c:370: maxHalfTrunc + maxHalfRound: bcd_add(0x49, 0x50) ... OK
+utest: bcd-tests.c:376: error, bcd_add(0x49, 0x50) ... OK
+utest: bcd-tests.c:389: check-carry: maxHalfTrunc + maxHalfTrunc: bcd_add(0x49, 0x49) ... OK
+utest: bcd-tests.c:395: error, bcd_add(0x49, 0x49) ... OK
+utest: bcd-tests.c:406: bad-val + maxHalfTrunc: bcd_add(0xa9, 0x49) ... OK
+utest: bcd-tests.c:417: max4 + bad-val: bcd_add(0x95, 0xa5) ... OK
+utest: bcd-tests.c:428: max4 + 5: bcd_add(0x95, 0x5) ... OK
+utest: bcd-tests.c:439: 2 + max1: bcd_add(0x2, 0x98) ... OK
+utest: bcd-tests.c:465: consecutive * 2: bcd_multiply(0x12, 0x2) ... OK
+utest: bcd-tests.c:471: error, bcd_multiply(0x12, 0x2) ... OK
+utest: bcd-tests.c:486: maxHalfTrunc * 0x2: bcd_multiply(0x49, 0x2) ... OK
+utest: bcd-tests.c:492: error, bcd_multiply(0x49, 0x2) ... OK
+utest: bcd-tests.c:505: 0x9 * 0x9: bcd_multiply(0x9, 0x9) ... OK
+utest: bcd-tests.c:511: error, bcd_multiply(0x9, 0x9) ... OK
+utest: bcd-tests.c:522: bad-val * maxHalfTrunc: bcd_multiply(0xa9, 0x49) ... OK
+utest: bcd-tests.c:533: 0x1 * badVal: bcd_multiply(0x1, 0xa5) ... OK
+utest: bcd-tests.c:545: OVERFLOW_ERR: maxHalfRound * 0x2: bcd_multiply(0x50, 0x2) ... OK
+utest: bcd-tests.c:569: 39 * 2: error bcd_multiply(0x39, 0x2) ... OK
+utest: bcd-tests.c:577: adding 3: error bcd_multiply(0x78, 0x3) ... OK
+utest: bcd-tests.c:581: 39 * 2 + 3 ... OK
+utest: bcd-tests.c:595: 29 + 2: error bcd_add(0x29, 0x2) ... OK
+utest: bcd-tests.c:603: multiplying by 3: error bcd_multiply(0x31, 0x3) ... OK
+utest: bcd-tests.c:607: (29 + 2) * 3 ... OK
+utest: bcd-tests.c:619: maxHalfTrunc * 2: error bcd_multiply(0x49, 0x2) ... OK
+utest: bcd-tests.c:624: overflow on maxHalfTrunc*2 + 3 ... OK
+gcc -c -g -Wall -I $HOME/cs220/include -DBCD_BASE=1 bcd-tests.c -o bcd-tests-1.o
+gcc -c -g -Wall -I $HOME/cs220/include -DBCD_BASE=1 bcd.c -o bcd-1.o
+gcc bcd-tests-1.o bcd-1.o -o bcd-tests-1
+./bcd-tests-1
+utest: bcd-tests.c:176: zero: binary_to_bcd(0) value ... OK
+utest: bcd-tests.c:180: zero NO_ERR: binary_to_bcd(0) ... OK
+utest: bcd-tests.c:176: consecutive: binary_to_bcd(1234) value ... OK
+utest: bcd-tests.c:180: consecutive NO_ERR: binary_to_bcd(1234) ... OK
+utest: bcd-tests.c:176: max: binary_to_bcd(9999) value ... OK
+utest: bcd-tests.c:180: max NO_ERR: binary_to_bcd(9999) ... OK
+utest: bcd-tests.c:176: max - 2: binary_to_bcd(9998) value ... OK
+utest: bcd-tests.c:180: max - 2 NO_ERR: binary_to_bcd(9998) ... OK
+utest: bcd-tests.c:176: max - 4: binary_to_bcd(9995) value ... OK
+utest: bcd-tests.c:180: max - 4 NO_ERR: binary_to_bcd(9995) ... OK
+utest: bcd-tests.c:176: maxHalfTrunc: binary_to_bcd(4999) value ... OK
+utest: bcd-tests.c:180: maxHalfTrunc NO_ERR: binary_to_bcd(4999) ... OK
+utest: bcd-tests.c:176: maxHalfRound: binary_to_bcd(5000) value ... OK
+utest: bcd-tests.c:180: maxHalfRound NO_ERR: binary_to_bcd(5000) ... OK
+utest: bcd-tests.c:190: OVERFLOW_ERR: binary_to_bcd(10000) ... OK
+utest: bcd-tests.c:208: zero: bcd_to_binary(0x0) value ... OK
+utest: bcd-tests.c:212: zero NO_ERR: bcd_to_binary(0x0) ... OK
+utest: bcd-tests.c:208: consecutive: bcd_to_binary(0x1234) value ... OK
+utest: bcd-tests.c:212: consecutive NO_ERR: bcd_to_binary(0x1234) ... OK
+utest: bcd-tests.c:208: max: bcd_to_binary(0x9999) value ... OK
+utest: bcd-tests.c:212: max NO_ERR: bcd_to_binary(0x9999) ... OK
+utest: bcd-tests.c:208: max - 2: bcd_to_binary(0x9998) value ... OK
+utest: bcd-tests.c:212: max - 2 NO_ERR: bcd_to_binary(0x9998) ... OK
+utest: bcd-tests.c:208: max - 4: bcd_to_binary(0x9995) value ... OK
+utest: bcd-tests.c:212: max - 4 NO_ERR: bcd_to_binary(0x9995) ... OK
+utest: bcd-tests.c:208: maxHalfTrunc: bcd_to_binary(0x4999) value ... OK
+utest: bcd-tests.c:212: maxHalfTrunc NO_ERR: bcd_to_binary(0x4999) ... OK
+utest: bcd-tests.c:208: maxHalfRound: bcd_to_binary(0x5000) value ... OK
+utest: bcd-tests.c:212: maxHalfRound NO_ERR: bcd_to_binary(0x5000) ... OK
+utest: bcd-tests.c:221: BAD_VALUE_ERR: bcd_to_binary(0x270a) ... OK
+utest: bcd-tests.c:238: zero: str_to_bcd("0") value ... OK
+utest: bcd-tests.c:242: zero NO_ERR: binary_to_bcd("0") ... OK
+utest: bcd-tests.c:249: zero: str_to_bcd("0") left-over char '\0' ... OK
+utest: bcd-tests.c:238: consecutive: str_to_bcd("1234") value ... OK
+utest: bcd-tests.c:242: consecutive NO_ERR: binary_to_bcd("1234") ... OK
+utest: bcd-tests.c:249: consecutive: str_to_bcd("1234") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max: str_to_bcd("9999") value ... OK
+utest: bcd-tests.c:242: max NO_ERR: binary_to_bcd("9999") ... OK
+utest: bcd-tests.c:249: max: str_to_bcd("9999") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max - 2: str_to_bcd("9998") value ... OK
+utest: bcd-tests.c:242: max - 2 NO_ERR: binary_to_bcd("9998") ... OK
+utest: bcd-tests.c:249: max - 2: str_to_bcd("9998") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max - 4: str_to_bcd("9995") value ... OK
+utest: bcd-tests.c:242: max - 4 NO_ERR: binary_to_bcd("9995") ... OK
+utest: bcd-tests.c:249: max - 4: str_to_bcd("9995") left-over char '\0' ... OK
+utest: bcd-tests.c:238: maxHalfTrunc: str_to_bcd("4999") value ... OK
+utest: bcd-tests.c:242: maxHalfTrunc NO_ERR: binary_to_bcd("4999") ... OK
+utest: bcd-tests.c:249: maxHalfTrunc: str_to_bcd("4999") left-over char '\0' ... OK
+utest: bcd-tests.c:238: maxHalfRound: str_to_bcd("5000") value ... OK
+utest: bcd-tests.c:242: maxHalfRound NO_ERR: binary_to_bcd("5000") ... OK
+utest: bcd-tests.c:249: maxHalfRound: str_to_bcd("5000") left-over char '\0' ... OK
+utest: bcd-tests.c:265: zero: str_to_bcd("0") left-over char 'a' ... OK
+utest: bcd-tests.c:265: consecutive: str_to_bcd("1234") left-over char 'b' ... OK
+utest: bcd-tests.c:265: max: str_to_bcd("9999") left-over char 'c' ... OK
+utest: bcd-tests.c:265: max - 2: str_to_bcd("9998") left-over char 'd' ... OK
+utest: bcd-tests.c:265: max - 4: str_to_bcd("9995") left-over char 'e' ... OK
+utest: bcd-tests.c:265: maxHalfTrunc: str_to_bcd("4999") left-over char 'f' ... OK
+utest: bcd-tests.c:265: maxHalfRound: str_to_bcd("5000") left-over char 'g' ... OK
+utest: bcd-tests.c:277: OVERFLOW_ERR: str_to_bcd("11111") ... OK
+utest: bcd-tests.c:296: zero: bcd_to_str(0x0) value ... OK
+utest: bcd-tests.c:302: zero NO_ERR: bcd_to_str(0x0) ... OK
+utest: bcd-tests.c:296: consecutive: bcd_to_str(0x1234) value ... OK
+utest: bcd-tests.c:302: consecutive NO_ERR: bcd_to_str(0x1234) ... OK
+utest: bcd-tests.c:296: max: bcd_to_str(0x9999) value ... OK
+utest: bcd-tests.c:302: max NO_ERR: bcd_to_str(0x9999) ... OK
+utest: bcd-tests.c:296: max - 2: bcd_to_str(0x9998) value ... OK
+utest: bcd-tests.c:302: max - 2 NO_ERR: bcd_to_str(0x9998) ... OK
+utest: bcd-tests.c:296: max - 4: bcd_to_str(0x9995) value ... OK
+utest: bcd-tests.c:302: max - 4 NO_ERR: bcd_to_str(0x9995) ... OK
+utest: bcd-tests.c:296: maxHalfTrunc: bcd_to_str(0x4999) value ... OK
+utest: bcd-tests.c:302: maxHalfTrunc NO_ERR: bcd_to_str(0x4999) ... OK
+utest: bcd-tests.c:296: maxHalfRound: bcd_to_str(0x5000) value ... OK
+utest: bcd-tests.c:302: maxHalfRound NO_ERR: bcd_to_str(0x5000) ... OK
+utest: bcd-tests.c:315: zero OVERFLOW_ERR: bcd_to_str(0x0) value ... OK
+utest: bcd-tests.c:319: zero size: bcd_to_str(0x0) ... OK
+utest: bcd-tests.c:315: consecutive OVERFLOW_ERR: bcd_to_str(0x1234) value ... OK
+utest: bcd-tests.c:319: consecutive size: bcd_to_str(0x1234) ... OK
+utest: bcd-tests.c:315: max OVERFLOW_ERR: bcd_to_str(0x9999) value ... OK
+utest: bcd-tests.c:319: max size: bcd_to_str(0x9999) ... OK
+utest: bcd-tests.c:315: max - 2 OVERFLOW_ERR: bcd_to_str(0x9998) value ... OK
+utest: bcd-tests.c:319: max - 2 size: bcd_to_str(0x9998) ... OK
+utest: bcd-tests.c:315: max - 4 OVERFLOW_ERR: bcd_to_str(0x9995) value ... OK
+utest: bcd-tests.c:319: max - 4 size: bcd_to_str(0x9995) ... OK
+utest: bcd-tests.c:315: maxHalfTrunc OVERFLOW_ERR: bcd_to_str(0x4999) value ... OK
+utest: bcd-tests.c:319: maxHalfTrunc size: bcd_to_str(0x4999) ... OK
+utest: bcd-tests.c:315: maxHalfRound OVERFLOW_ERR: bcd_to_str(0x5000) value ... OK
+utest: bcd-tests.c:319: maxHalfRound size: bcd_to_str(0x5000) ... OK
+utest: bcd-tests.c:328: BAD_VALUE_ERR: bcd_to_str(0x270a) ... OK
+utest: bcd-tests.c:352: inc-consecutive: bcd_add(0x1234, 0x1) ... OK
+utest: bcd-tests.c:357: error bcd_add(0x1234, 0x1) ... OK
+utest: bcd-tests.c:370: maxHalfTrunc + maxHalfRound: bcd_add(0x4999, 0x5000) ... OK
+utest: bcd-tests.c:376: error, bcd_add(0x4999, 0x5000) ... OK
+utest: bcd-tests.c:389: check-carry: maxHalfTrunc + maxHalfTrunc: bcd_add(0x4999, 0x4999) ... OK
+utest: bcd-tests.c:395: error, bcd_add(0x4999, 0x4999) ... OK
+utest: bcd-tests.c:406: bad-val + maxHalfTrunc: bcd_add(0x49a9, 0x4999) ... OK
+utest: bcd-tests.c:417: max4 + bad-val: bcd_add(0x9995, 0x99a5) ... OK
+utest: bcd-tests.c:428: max4 + 5: bcd_add(0x9995, 0x5) ... OK
+utest: bcd-tests.c:439: 2 + max1: bcd_add(0x2, 0x9998) ... OK
+utest: bcd-tests.c:465: consecutive * 2: bcd_multiply(0x1234, 0x2) ... OK
+utest: bcd-tests.c:471: error, bcd_multiply(0x1234, 0x2) ... OK
+utest: bcd-tests.c:486: maxHalfTrunc * 0x2: bcd_multiply(0x4999, 0x2) ... OK
+utest: bcd-tests.c:492: error, bcd_multiply(0x4999, 0x2) ... OK
+utest: bcd-tests.c:505: 0x9 * 0x9: bcd_multiply(0x9, 0x9) ... OK
+utest: bcd-tests.c:511: error, bcd_multiply(0x9, 0x9) ... OK
+utest: bcd-tests.c:522: bad-val * maxHalfTrunc: bcd_multiply(0x49a9, 0x4999) ... OK
+utest: bcd-tests.c:533: 0x1 * badVal: bcd_multiply(0x1, 0x99a5) ... OK
+utest: bcd-tests.c:545: OVERFLOW_ERR: maxHalfRound * 0x2: bcd_multiply(0x5000, 0x2) ... OK
+utest: bcd-tests.c:569: 39 * 2: error bcd_multiply(0x39, 0x2) ... OK
+utest: bcd-tests.c:577: adding 3: error bcd_multiply(0x78, 0x3) ... OK
+utest: bcd-tests.c:581: 39 * 2 + 3 ... OK
+utest: bcd-tests.c:595: 29 + 2: error bcd_add(0x29, 0x2) ... OK
+utest: bcd-tests.c:603: multiplying by 3: error bcd_multiply(0x31, 0x3) ... OK
+utest: bcd-tests.c:607: (29 + 2) * 3 ... OK
+utest: bcd-tests.c:619: maxHalfTrunc * 2: error bcd_multiply(0x4999, 0x2) ... OK
+utest: bcd-tests.c:624: overflow on maxHalfTrunc*2 + 3 ... OK
+gcc -c -g -Wall -I $HOME/cs220/include -DBCD_BASE=2 bcd-tests.c -o bcd-tests-2.o
+gcc -c -g -Wall -I $HOME/cs220/include -DBCD_BASE=2 bcd.c -o bcd-2.o
+gcc bcd-tests-2.o bcd-2.o -o bcd-tests-2
+./bcd-tests-2
+utest: bcd-tests.c:176: zero: binary_to_bcd(0) value ... OK
+utest: bcd-tests.c:180: zero NO_ERR: binary_to_bcd(0) ... OK
+utest: bcd-tests.c:176: consecutive: binary_to_bcd(12345678) value ... OK
+utest: bcd-tests.c:180: consecutive NO_ERR: binary_to_bcd(12345678) ... OK
+utest: bcd-tests.c:176: max: binary_to_bcd(99999999) value ... OK
+utest: bcd-tests.c:180: max NO_ERR: binary_to_bcd(99999999) ... OK
+utest: bcd-tests.c:176: max - 2: binary_to_bcd(99999998) value ... OK
+utest: bcd-tests.c:180: max - 2 NO_ERR: binary_to_bcd(99999998) ... OK
+utest: bcd-tests.c:176: max - 4: binary_to_bcd(99999995) value ... OK
+utest: bcd-tests.c:180: max - 4 NO_ERR: binary_to_bcd(99999995) ... OK
+utest: bcd-tests.c:176: maxHalfTrunc: binary_to_bcd(49999999) value ... OK
+utest: bcd-tests.c:180: maxHalfTrunc NO_ERR: binary_to_bcd(49999999) ... OK
+utest: bcd-tests.c:176: maxHalfRound: binary_to_bcd(50000000) value ... OK
+utest: bcd-tests.c:180: maxHalfRound NO_ERR: binary_to_bcd(50000000) ... OK
+utest: bcd-tests.c:190: OVERFLOW_ERR: binary_to_bcd(100000000) ... OK
+utest: bcd-tests.c:208: zero: bcd_to_binary(0x0) value ... OK
+utest: bcd-tests.c:212: zero NO_ERR: bcd_to_binary(0x0) ... OK
+utest: bcd-tests.c:208: consecutive: bcd_to_binary(0x12345678) value ... OK
+utest: bcd-tests.c:212: consecutive NO_ERR: bcd_to_binary(0x12345678) ... OK
+utest: bcd-tests.c:208: max: bcd_to_binary(0x99999999) value ... OK
+utest: bcd-tests.c:212: max NO_ERR: bcd_to_binary(0x99999999) ... OK
+utest: bcd-tests.c:208: max - 2: bcd_to_binary(0x99999998) value ... OK
+utest: bcd-tests.c:212: max - 2 NO_ERR: bcd_to_binary(0x99999998) ... OK
+utest: bcd-tests.c:208: max - 4: bcd_to_binary(0x99999995) value ... OK
+utest: bcd-tests.c:212: max - 4 NO_ERR: bcd_to_binary(0x99999995) ... OK
+utest: bcd-tests.c:208: maxHalfTrunc: bcd_to_binary(0x49999999) value ... OK
+utest: bcd-tests.c:212: maxHalfTrunc NO_ERR: bcd_to_binary(0x49999999) ... OK
+utest: bcd-tests.c:208: maxHalfRound: bcd_to_binary(0x50000000) value ... OK
+utest: bcd-tests.c:212: maxHalfRound NO_ERR: bcd_to_binary(0x50000000) ... OK
+utest: bcd-tests.c:221: BAD_VALUE_ERR: bcd_to_binary(0x5f5e0fa) ... OK
+utest: bcd-tests.c:238: zero: str_to_bcd("0") value ... OK
+utest: bcd-tests.c:242: zero NO_ERR: binary_to_bcd("0") ... OK
+utest: bcd-tests.c:249: zero: str_to_bcd("0") left-over char '\0' ... OK
+utest: bcd-tests.c:238: consecutive: str_to_bcd("12345678") value ... OK
+utest: bcd-tests.c:242: consecutive NO_ERR: binary_to_bcd("12345678") ... OK
+utest: bcd-tests.c:249: consecutive: str_to_bcd("12345678") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max: str_to_bcd("99999999") value ... OK
+utest: bcd-tests.c:242: max NO_ERR: binary_to_bcd("99999999") ... OK
+utest: bcd-tests.c:249: max: str_to_bcd("99999999") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max - 2: str_to_bcd("99999998") value ... OK
+utest: bcd-tests.c:242: max - 2 NO_ERR: binary_to_bcd("99999998") ... OK
+utest: bcd-tests.c:249: max - 2: str_to_bcd("99999998") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max - 4: str_to_bcd("99999995") value ... OK
+utest: bcd-tests.c:242: max - 4 NO_ERR: binary_to_bcd("99999995") ... OK
+utest: bcd-tests.c:249: max - 4: str_to_bcd("99999995") left-over char '\0' ... OK
+utest: bcd-tests.c:238: maxHalfTrunc: str_to_bcd("49999999") value ... OK
+utest: bcd-tests.c:242: maxHalfTrunc NO_ERR: binary_to_bcd("49999999") ... OK
+utest: bcd-tests.c:249: maxHalfTrunc: str_to_bcd("49999999") left-over char '\0' ... OK
+utest: bcd-tests.c:238: maxHalfRound: str_to_bcd("50000000") value ... OK
+utest: bcd-tests.c:242: maxHalfRound NO_ERR: binary_to_bcd("50000000") ... OK
+utest: bcd-tests.c:249: maxHalfRound: str_to_bcd("50000000") left-over char '\0' ... OK
+utest: bcd-tests.c:265: zero: str_to_bcd("0") left-over char 'a' ... OK
+utest: bcd-tests.c:265: consecutive: str_to_bcd("12345678") left-over char 'b' ... OK
+utest: bcd-tests.c:265: max: str_to_bcd("99999999") left-over char 'c' ... OK
+utest: bcd-tests.c:265: max - 2: str_to_bcd("99999998") left-over char 'd' ... OK
+utest: bcd-tests.c:265: max - 4: str_to_bcd("99999995") left-over char 'e' ... OK
+utest: bcd-tests.c:265: maxHalfTrunc: str_to_bcd("49999999") left-over char 'f' ... OK
+utest: bcd-tests.c:265: maxHalfRound: str_to_bcd("50000000") left-over char 'g' ... OK
+utest: bcd-tests.c:277: OVERFLOW_ERR: str_to_bcd("111111111") ... OK
+utest: bcd-tests.c:296: zero: bcd_to_str(0x0) value ... OK
+utest: bcd-tests.c:302: zero NO_ERR: bcd_to_str(0x0) ... OK
+utest: bcd-tests.c:296: consecutive: bcd_to_str(0x12345678) value ... OK
+utest: bcd-tests.c:302: consecutive NO_ERR: bcd_to_str(0x12345678) ... OK
+utest: bcd-tests.c:296: max: bcd_to_str(0x99999999) value ... OK
+utest: bcd-tests.c:302: max NO_ERR: bcd_to_str(0x99999999) ... OK
+utest: bcd-tests.c:296: max - 2: bcd_to_str(0x99999998) value ... OK
+utest: bcd-tests.c:302: max - 2 NO_ERR: bcd_to_str(0x99999998) ... OK
+utest: bcd-tests.c:296: max - 4: bcd_to_str(0x99999995) value ... OK
+utest: bcd-tests.c:302: max - 4 NO_ERR: bcd_to_str(0x99999995) ... OK
+utest: bcd-tests.c:296: maxHalfTrunc: bcd_to_str(0x49999999) value ... OK
+utest: bcd-tests.c:302: maxHalfTrunc NO_ERR: bcd_to_str(0x49999999) ... OK
+utest: bcd-tests.c:296: maxHalfRound: bcd_to_str(0x50000000) value ... OK
+utest: bcd-tests.c:302: maxHalfRound NO_ERR: bcd_to_str(0x50000000) ... OK
+utest: bcd-tests.c:315: zero OVERFLOW_ERR: bcd_to_str(0x0) value ... OK
+utest: bcd-tests.c:319: zero size: bcd_to_str(0x0) ... OK
+utest: bcd-tests.c:315: consecutive OVERFLOW_ERR: bcd_to_str(0x12345678) value ... OK
+utest: bcd-tests.c:319: consecutive size: bcd_to_str(0x12345678) ... OK
+utest: bcd-tests.c:315: max OVERFLOW_ERR: bcd_to_str(0x99999999) value ... OK
+utest: bcd-tests.c:319: max size: bcd_to_str(0x99999999) ... OK
+utest: bcd-tests.c:315: max - 2 OVERFLOW_ERR: bcd_to_str(0x99999998) value ... OK
+utest: bcd-tests.c:319: max - 2 size: bcd_to_str(0x99999998) ... OK
+utest: bcd-tests.c:315: max - 4 OVERFLOW_ERR: bcd_to_str(0x99999995) value ... OK
+utest: bcd-tests.c:319: max - 4 size: bcd_to_str(0x99999995) ... OK
+utest: bcd-tests.c:315: maxHalfTrunc OVERFLOW_ERR: bcd_to_str(0x49999999) value ... OK
+utest: bcd-tests.c:319: maxHalfTrunc size: bcd_to_str(0x49999999) ... OK
+utest: bcd-tests.c:315: maxHalfRound OVERFLOW_ERR: bcd_to_str(0x50000000) value ... OK
+utest: bcd-tests.c:319: maxHalfRound size: bcd_to_str(0x50000000) ... OK
+utest: bcd-tests.c:328: BAD_VALUE_ERR: bcd_to_str(0x5f5e0fa) ... OK
+utest: bcd-tests.c:352: inc-consecutive: bcd_add(0x12345678, 0x1) ... OK
+utest: bcd-tests.c:357: error bcd_add(0x12345678, 0x1) ... OK
+utest: bcd-tests.c:370: maxHalfTrunc + maxHalfRound: bcd_add(0x49999999, 0x50000000) ... OK
+utest: bcd-tests.c:376: error, bcd_add(0x49999999, 0x50000000) ... OK
+utest: bcd-tests.c:389: check-carry: maxHalfTrunc + maxHalfTrunc: bcd_add(0x49999999, 0x49999999) ... OK
+utest: bcd-tests.c:395: error, bcd_add(0x49999999, 0x49999999) ... OK
+utest: bcd-tests.c:406: bad-val + maxHalfTrunc: bcd_add(0x499999a9, 0x49999999) ... OK
+utest: bcd-tests.c:417: max4 + bad-val: bcd_add(0x99999995, 0x999999a5) ... OK
+utest: bcd-tests.c:428: max4 + 5: bcd_add(0x99999995, 0x5) ... OK
+utest: bcd-tests.c:439: 2 + max1: bcd_add(0x2, 0x99999998) ... OK
+utest: bcd-tests.c:465: consecutive * 2: bcd_multiply(0x12345678, 0x2) ... OK
+utest: bcd-tests.c:471: error, bcd_multiply(0x12345678, 0x2) ... OK
+utest: bcd-tests.c:486: maxHalfTrunc * 0x2: bcd_multiply(0x49999999, 0x2) ... OK
+utest: bcd-tests.c:492: error, bcd_multiply(0x49999999, 0x2) ... OK
+utest: bcd-tests.c:505: 0x9 * 0x9: bcd_multiply(0x9, 0x9) ... OK
+utest: bcd-tests.c:511: error, bcd_multiply(0x9, 0x9) ... OK
+utest: bcd-tests.c:522: bad-val * maxHalfTrunc: bcd_multiply(0x499999a9, 0x49999999) ... OK
+utest: bcd-tests.c:533: 0x1 * badVal: bcd_multiply(0x1, 0x999999a5) ... OK
+utest: bcd-tests.c:545: OVERFLOW_ERR: maxHalfRound * 0x2: bcd_multiply(0x50000000, 0x2) ... OK
+utest: bcd-tests.c:569: 39 * 2: error bcd_multiply(0x39, 0x2) ... OK
+utest: bcd-tests.c:577: adding 3: error bcd_multiply(0x78, 0x3) ... OK
+utest: bcd-tests.c:581: 39 * 2 + 3 ... OK
+utest: bcd-tests.c:595: 29 + 2: error bcd_add(0x29, 0x2) ... OK
+utest: bcd-tests.c:603: multiplying by 3: error bcd_multiply(0x31, 0x3) ... OK
+utest: bcd-tests.c:607: (29 + 2) * 3 ... OK
+utest: bcd-tests.c:619: maxHalfTrunc * 2: error bcd_multiply(0x49999999, 0x2) ... OK
+utest: bcd-tests.c:624: overflow on maxHalfTrunc*2 + 3 ... OK
+gcc -c -g -Wall -I $HOME/cs220/include -DBCD_BASE=3 bcd-tests.c -o bcd-tests-3.o
+gcc -c -g -Wall -I $HOME/cs220/include -DBCD_BASE=3 bcd.c -o bcd-3.o
+gcc bcd-tests-3.o bcd-3.o -o bcd-tests-3
+./bcd-tests-3
+utest: bcd-tests.c:176: zero: binary_to_bcd(0) value ... OK
+utest: bcd-tests.c:180: zero NO_ERR: binary_to_bcd(0) ... OK
+utest: bcd-tests.c:176: consecutive: binary_to_bcd(1234567890123456) value ... OK
+utest: bcd-tests.c:180: consecutive NO_ERR: binary_to_bcd(1234567890123456) ... OK
+utest: bcd-tests.c:176: max: binary_to_bcd(9999999999999999) value ... OK
+utest: bcd-tests.c:180: max NO_ERR: binary_to_bcd(9999999999999999) ... OK
+utest: bcd-tests.c:176: max - 2: binary_to_bcd(9999999999999998) value ... OK
+utest: bcd-tests.c:180: max - 2 NO_ERR: binary_to_bcd(9999999999999998) ... OK
+utest: bcd-tests.c:176: max - 4: binary_to_bcd(9999999999999995) value ... OK
+utest: bcd-tests.c:180: max - 4 NO_ERR: binary_to_bcd(9999999999999995) ... OK
+utest: bcd-tests.c:176: maxHalfTrunc: binary_to_bcd(4999999999999999) value ... OK
+utest: bcd-tests.c:180: maxHalfTrunc NO_ERR: binary_to_bcd(4999999999999999) ... OK
+utest: bcd-tests.c:176: maxHalfRound: binary_to_bcd(5000000000000000) value ... OK
+utest: bcd-tests.c:180: maxHalfRound NO_ERR: binary_to_bcd(5000000000000000) ... OK
+utest: bcd-tests.c:190: OVERFLOW_ERR: binary_to_bcd(10000000000000000) ... OK
+utest: bcd-tests.c:208: zero: bcd_to_binary(0x0) value ... OK
+utest: bcd-tests.c:212: zero NO_ERR: bcd_to_binary(0x0) ... OK
+utest: bcd-tests.c:208: consecutive: bcd_to_binary(0x1234567890123456) value ... OK
+utest: bcd-tests.c:212: consecutive NO_ERR: bcd_to_binary(0x1234567890123456) ... OK
+utest: bcd-tests.c:208: max: bcd_to_binary(0x9999999999999999) value ... OK
+utest: bcd-tests.c:212: max NO_ERR: bcd_to_binary(0x9999999999999999) ... OK
+utest: bcd-tests.c:208: max - 2: bcd_to_binary(0x9999999999999998) value ... OK
+utest: bcd-tests.c:212: max - 2 NO_ERR: bcd_to_binary(0x9999999999999998) ... OK
+utest: bcd-tests.c:208: max - 4: bcd_to_binary(0x9999999999999995) value ... OK
+utest: bcd-tests.c:212: max - 4 NO_ERR: bcd_to_binary(0x9999999999999995) ... OK
+utest: bcd-tests.c:208: maxHalfTrunc: bcd_to_binary(0x4999999999999999) value ... OK
+utest: bcd-tests.c:212: maxHalfTrunc NO_ERR: bcd_to_binary(0x4999999999999999) ... OK
+utest: bcd-tests.c:208: maxHalfRound: bcd_to_binary(0x5000000000000000) value ... OK
+utest: bcd-tests.c:212: maxHalfRound NO_ERR: bcd_to_binary(0x5000000000000000) ... OK
+utest: bcd-tests.c:221: BAD_VALUE_ERR: bcd_to_binary(0x2386f26fc0fffa) ... OK
+utest: bcd-tests.c:238: zero: str_to_bcd("0") value ... OK
+utest: bcd-tests.c:242: zero NO_ERR: binary_to_bcd("0") ... OK
+utest: bcd-tests.c:249: zero: str_to_bcd("0") left-over char '\0' ... OK
+utest: bcd-tests.c:238: consecutive: str_to_bcd("1234567890123456") value ... OK
+utest: bcd-tests.c:242: consecutive NO_ERR: binary_to_bcd("1234567890123456") ... OK
+utest: bcd-tests.c:249: consecutive: str_to_bcd("1234567890123456") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max: str_to_bcd("9999999999999999") value ... OK
+utest: bcd-tests.c:242: max NO_ERR: binary_to_bcd("9999999999999999") ... OK
+utest: bcd-tests.c:249: max: str_to_bcd("9999999999999999") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max - 2: str_to_bcd("9999999999999998") value ... OK
+utest: bcd-tests.c:242: max - 2 NO_ERR: binary_to_bcd("9999999999999998") ... OK
+utest: bcd-tests.c:249: max - 2: str_to_bcd("9999999999999998") left-over char '\0' ... OK
+utest: bcd-tests.c:238: max - 4: str_to_bcd("9999999999999995") value ... OK
+utest: bcd-tests.c:242: max - 4 NO_ERR: binary_to_bcd("9999999999999995") ... OK
+utest: bcd-tests.c:249: max - 4: str_to_bcd("9999999999999995") left-over char '\0' ... OK
+utest: bcd-tests.c:238: maxHalfTrunc: str_to_bcd("4999999999999999") value ... OK
+utest: bcd-tests.c:242: maxHalfTrunc NO_ERR: binary_to_bcd("4999999999999999") ... OK
+utest: bcd-tests.c:249: maxHalfTrunc: str_to_bcd("4999999999999999") left-over char '\0' ... OK
+utest: bcd-tests.c:238: maxHalfRound: str_to_bcd("5000000000000000") value ... OK
+utest: bcd-tests.c:242: maxHalfRound NO_ERR: binary_to_bcd("5000000000000000") ... OK
+utest: bcd-tests.c:249: maxHalfRound: str_to_bcd("5000000000000000") left-over char '\0' ... OK
+utest: bcd-tests.c:265: zero: str_to_bcd("0") left-over char 'a' ... OK
+utest: bcd-tests.c:265: consecutive: str_to_bcd("1234567890123456") left-over char 'b' ... OK
+utest: bcd-tests.c:265: max: str_to_bcd("9999999999999999") left-over char 'c' ... OK
+utest: bcd-tests.c:265: max - 2: str_to_bcd("9999999999999998") left-over char 'd' ... OK
+utest: bcd-tests.c:265: max - 4: str_to_bcd("9999999999999995") left-over char 'e' ... OK
+utest: bcd-tests.c:265: maxHalfTrunc: str_to_bcd("4999999999999999") left-over char 'f' ... OK
+utest: bcd-tests.c:265: maxHalfRound: str_to_bcd("5000000000000000") left-over char 'g' ... OK
+utest: bcd-tests.c:277: OVERFLOW_ERR: str_to_bcd("11111111111111111") ... OK
+utest: bcd-tests.c:296: zero: bcd_to_str(0x0) value ... OK
+utest: bcd-tests.c:302: zero NO_ERR: bcd_to_str(0x0) ... OK
+utest: bcd-tests.c:296: consecutive: bcd_to_str(0x1234567890123456) value ... OK
+utest: bcd-tests.c:302: consecutive NO_ERR: bcd_to_str(0x1234567890123456) ... OK
+utest: bcd-tests.c:296: max: bcd_to_str(0x9999999999999999) value ... OK
+utest: bcd-tests.c:302: max NO_ERR: bcd_to_str(0x9999999999999999) ... OK
+utest: bcd-tests.c:296: max - 2: bcd_to_str(0x9999999999999998) value ... OK
+utest: bcd-tests.c:302: max - 2 NO_ERR: bcd_to_str(0x9999999999999998) ... OK
+utest: bcd-tests.c:296: max - 4: bcd_to_str(0x9999999999999995) value ... OK
+utest: bcd-tests.c:302: max - 4 NO_ERR: bcd_to_str(0x9999999999999995) ... OK
+utest: bcd-tests.c:296: maxHalfTrunc: bcd_to_str(0x4999999999999999) value ... OK
+utest: bcd-tests.c:302: maxHalfTrunc NO_ERR: bcd_to_str(0x4999999999999999) ... OK
+utest: bcd-tests.c:296: maxHalfRound: bcd_to_str(0x5000000000000000) value ... OK
+utest: bcd-tests.c:302: maxHalfRound NO_ERR: bcd_to_str(0x5000000000000000) ... OK
+utest: bcd-tests.c:315: zero OVERFLOW_ERR: bcd_to_str(0x0) value ... OK
+utest: bcd-tests.c:319: zero size: bcd_to_str(0x0) ... OK
+utest: bcd-tests.c:315: consecutive OVERFLOW_ERR: bcd_to_str(0x1234567890123456) value ... OK
+utest: bcd-tests.c:319: consecutive size: bcd_to_str(0x1234567890123456) ... OK
+utest: bcd-tests.c:315: max OVERFLOW_ERR: bcd_to_str(0x9999999999999999) value ... OK
+utest: bcd-tests.c:319: max size: bcd_to_str(0x9999999999999999) ... OK
+utest: bcd-tests.c:315: max - 2 OVERFLOW_ERR: bcd_to_str(0x9999999999999998) value ... OK
+utest: bcd-tests.c:319: max - 2 size: bcd_to_str(0x9999999999999998) ... OK
+utest: bcd-tests.c:315: max - 4 OVERFLOW_ERR: bcd_to_str(0x9999999999999995) value ... OK
+utest: bcd-tests.c:319: max - 4 size: bcd_to_str(0x9999999999999995) ... OK
+utest: bcd-tests.c:315: maxHalfTrunc OVERFLOW_ERR: bcd_to_str(0x4999999999999999) value ... OK
+utest: bcd-tests.c:319: maxHalfTrunc size: bcd_to_str(0x4999999999999999) ... OK
+utest: bcd-tests.c:315: maxHalfRound OVERFLOW_ERR: bcd_to_str(0x5000000000000000) value ... OK
+utest: bcd-tests.c:319: maxHalfRound size: bcd_to_str(0x5000000000000000) ... OK
+utest: bcd-tests.c:328: BAD_VALUE_ERR: bcd_to_str(0x2386f26fc0fffa) ... OK
+utest: bcd-tests.c:352: inc-consecutive: bcd_add(0x1234567890123456, 0x1) ... OK
+utest: bcd-tests.c:357: error bcd_add(0x1234567890123456, 0x1) ... OK
+utest: bcd-tests.c:370: maxHalfTrunc + maxHalfRound: bcd_add(0x4999999999999999, 0x5000000000000000) ... OK
+utest: bcd-tests.c:376: error, bcd_add(0x4999999999999999, 0x5000000000000000) ... OK
+utest: bcd-tests.c:389: check-carry: maxHalfTrunc + maxHalfTrunc: bcd_add(0x4999999999999999, 0x4999999999999999) ... OK
+utest: bcd-tests.c:395: error, bcd_add(0x4999999999999999, 0x4999999999999999) ... OK
+utest: bcd-tests.c:406: bad-val + maxHalfTrunc: bcd_add(0x49999999999999a9, 0x4999999999999999) ... OK
+utest: bcd-tests.c:417: max4 + bad-val: bcd_add(0x9999999999999995, 0x99999999999999a5) ... OK
+utest: bcd-tests.c:428: max4 + 5: bcd_add(0x9999999999999995, 0x5) ... OK
+utest: bcd-tests.c:439: 2 + max1: bcd_add(0x2, 0x9999999999999998) ... OK
+utest: bcd-tests.c:465: consecutive * 2: bcd_multiply(0x1234567890123456, 0x2) ... OK
+utest: bcd-tests.c:471: error, bcd_multiply(0x1234567890123456, 0x2) ... OK
+utest: bcd-tests.c:486: maxHalfTrunc * 0x2: bcd_multiply(0x4999999999999999, 0x2) ... OK
+utest: bcd-tests.c:492: error, bcd_multiply(0x4999999999999999, 0x2) ... OK
+utest: bcd-tests.c:505: 0x9 * 0x9: bcd_multiply(0x9, 0x9) ... OK
+utest: bcd-tests.c:511: error, bcd_multiply(0x9, 0x9) ... OK
+utest: bcd-tests.c:522: bad-val * maxHalfTrunc: bcd_multiply(0x49999999999999a9, 0x4999999999999999) ... OK
+utest: bcd-tests.c:533: 0x1 * badVal: bcd_multiply(0x1, 0x99999999999999a5) ... OK
+utest: bcd-tests.c:545: OVERFLOW_ERR: maxHalfRound * 0x2: bcd_multiply(0x5000000000000000, 0x2) ... OK
+utest: bcd-tests.c:569: 39 * 2: error bcd_multiply(0x39, 0x2) ... OK
+utest: bcd-tests.c:577: adding 3: error bcd_multiply(0x78, 0x3) ... OK
+utest: bcd-tests.c:581: 39 * 2 + 3 ... OK
+utest: bcd-tests.c:595: 29 + 2: error bcd_add(0x29, 0x2) ... OK
+utest: bcd-tests.c:603: multiplying by 3: error bcd_multiply(0x31, 0x3) ... OK
+utest: bcd-tests.c:607: (29 + 2) * 3 ... OK
+utest: bcd-tests.c:619: maxHalfTrunc * 2: error bcd_multiply(0x4999999999999999, 0x2) ... OK
+utest: bcd-tests.c:624: overflow on maxHalfTrunc*2 + 3 ... OK
+rm bcd-tests-1 bcd-tests-3 bcd-tests-0.o bcd-tests-2 bcd-0.o bcd-tests-2.o bcd-3.o bcd-tests-0 bcd-2.o bcd-tests-1.o bcd-tests-3.o bcd-1.o
