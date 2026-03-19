@@ -1,0 +1,4 @@
+testvec-dynamic.nm:                 U addvec
+testvec-dynamic.nm:                 U multvec
+testvec-static.nm:00000000004019d9 T addvec
+testvec-static.nm:0000000000401a49 T multvec

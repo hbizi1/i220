@@ -1,0 +1,4 @@
+log10-static.nm:00000000004016b0 W log10
+log10-static.nm:00000000004016b0 W log10f32x
+log10-static.nm:00000000004016b0 W log10f64
+log10-dynamic.nm:                 U log10@GLIBC_2.2.5

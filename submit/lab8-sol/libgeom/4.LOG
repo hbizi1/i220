@@ -1,0 +1,4 @@
+testgeom-dynamic.nm:                 U rect_area
+testgeom-dynamic.nm:                 U rect_perimeter
+testgeom-static.nm:000000000040191f T rect_area
+testgeom-static.nm:000000000040188c T rect_perimeter

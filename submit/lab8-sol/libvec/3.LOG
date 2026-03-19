@@ -1,0 +1,30 @@
++p &main
+$1 = (int (*)(int, const char **)) 0x4016b2 <main>
++p &addvec
+$2 = (void (*)(int *, int *, int *, int)) 0x4019d9 <addvec>
++p &multvec
+$3 = (void (*)(int *, int *, int *, int)) 0x401a49 <multvec>
++q
++p &main
+$1 = (int (*)(int, const char **)) 0x11f6 <main>
++p &addvec
+$2 = (<text variable, no debug info> *) 0x1060 <addvec@plt>
++p &multvec
+$3 = (<text variable, no debug info> *) 0x1050 <multvec@plt>
++start 1 2 3
+Temporary breakpoint 1 at 0x120f: file testvec.c, line 15.
+Starting program: /import/home/hbizier/i220/submit/lab8-sol/libvec/testvec-dynamic 1 2 3
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Temporary breakpoint 1, main (argc=4, argv=0x7fffffffdfe8) at testvec.c:15
+15	{
++p &main
+$4 = (int (*)(int, const char **)) 0x5555555551f6 <main>
++p &addvec
+$5 = (void (*)(int *, int *, int *, int)) 0x7ffff7fbe0f9 <addvec>
++&multvec
+Undefined command: "".  Try "help".
++p &multvec
+$6 = (void (*)(int *, int *, int *, int)) 0x7ffff7fbe169 <multvec>
++q
