@@ -21,7 +21,7 @@ int main() {
   const signed char c5 = c3 + c4;
   assert(c4 > 0 && c5 == -126);
 
-  const signed char c6 = 0;
+  const signed char c6 = 128;
   const signed char c7 = -c6;
   assert(c6 == c7);
 
@@ -37,10 +37,10 @@ int main() {
 
   //C now allows ' within literals for readability
   const unsigned short s1 = 60'000;
-  const unsigned short s2 = s1 + 5'635;
+  const unsigned short s2 = s1 + 5'636;
   assert(s2 == 100);
 
-  const signed short s3 = 0;
+  const signed short s3 = -32768;
   const signed short s4 = -s3;
   assert(s3 == s4);
 
