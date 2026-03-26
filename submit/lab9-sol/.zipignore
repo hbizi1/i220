@@ -1,0 +1,10 @@
+*~
+*/*.o
+*/.gitignore
+*/int-overflow
+*/nan
+*/inexact
+*/float-inexact
+*/ulp
+*/float-ulp
+*/indistinguishable
