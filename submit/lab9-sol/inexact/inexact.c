@@ -7,11 +7,8 @@ typedef float Real;
 typedef double Real;
 #endif
 
-#define TODO 0
-
-// replace TODO below with 0.1
 int main() {
-  const Real x = TODO;             //value being summed repeatedly
+  const Real x = 1.0;             //value being summed repeatedly
   const int n = ceil(1.0/x);      //how many additions to sum to 1.0
   Real sum = 0;
   for (int j = 0; j < n; j++) {

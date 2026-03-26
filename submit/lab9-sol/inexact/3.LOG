@@ -1,0 +1,9 @@
+Script started on 2026-03-26 14:53:55-04:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="120" LINES="63"]
+[?2004h]0;hbizier@remote06: ~/i220/submit/lab9-sol/inexact[01;32mhbizier@remote06[00m:[01;34m~/i220/submit/lab9-sol/inexact[00m$ ./float-inexact
+[?2004l       1 *  1 == 1.00000000000000000000; sum-is-1: true
+[?2004h]0;hbizier@remote06: ~/i220/submit/lab9-sol/inexact[01;32mhbizier@remote06[00m:[01;34m~/i220/submit/lab9-sol/inexact[00m$ ./inexact
+[?2004l       1 *  1 == 1.00000000000000000000; sum-is-1: true
+[?2004h]0;hbizier@remote06: ~/i220/submit/lab9-sol/inexact[01;32mhbizier@remote06[00m:[01;34m~/i220/submit/lab9-sol/inexact[00m$ [?2004l
+exit
+
+Script done on 2026-03-26 14:54:10-04:00 [COMMAND_EXIT_CODE="0"]

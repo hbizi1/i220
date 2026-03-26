@@ -1,0 +1,7 @@
+Script started on 2026-03-26 14:17:02-04:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="120" LINES="63"]
+[?2004h]0;hbizier@remote06: ~/i220/submit/lab9-sol/nan[01;32mhbizier@remote06[00m:[01;34m~/i220/submit/lab9-sol/nan[00m$ ./nan
+[?2004lv = 0; x = -nan; "true" must be "true"
+[?2004h]0;hbizier@remote06: ~/i220/submit/lab9-sol/nan[01;32mhbizier@remote06[00m:[01;34m~/i220/submit/lab9-sol/nan[00m$ [?2004l
+exit
+
+Script done on 2026-03-26 14:17:08-04:00 [COMMAND_EXIT_CODE="0"]
