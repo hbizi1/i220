@@ -1,4 +1,4 @@
-#get_cpuid(int *eaxP, int *ebxP, int *ecxP, int *edxP).
+x#get_cpuid(int *eaxP, int *ebxP, int *ecxP, int *edxP).
 #rdi = eaxP, rsi = ebxP, rdx = edxP, rcx = ecxP
 	.text
 	.globl get_cpuid
@@ -25,8 +25,19 @@ get_cpuid:
 #edi = op, rsi = eaxP, rdx = ebxP, rcx = edxP, r8 = ecxP	
 	.globl info_cpuid
 info_cpuid:
-	#TODO
-	ret
-	
+	push    %rbx
+        pushq   %rdx
+        pushq   %rcx
+	movl	%edi, (%eax)
+        cpuid
+        movl    %ecx, (%r8)    #store eax cpuid result
+        movl    %eax, (%rsi)    #store ebx cpuid result
+	popq    %rax            #pop address for edxP
+        movl    %edx, (%rax)    #store edx cpuid result
+        popq    %rax            #pop address for ecxP
+        movl    %ebx, (%rax)    #store ecx cpuid result
+        pop     %rbx
+        ret
+
 .section .note.GNU-stack,"",@progbits
 	
