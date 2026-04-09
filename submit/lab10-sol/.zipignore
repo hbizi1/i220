@@ -1,0 +1,16 @@
+*/.zipignore
+*/*.o
+*/*~
+*/cpuid
+*/rip
+*/rip.s
+*/rip.dump
+*/rsp
+*/rsp.s
+*/rsp.dump
+*/t.c
+*/t.s
+*/parity
+*/rotate.s
+*/rotate
+
