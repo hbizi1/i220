@@ -1,0 +1,1288 @@
+Script started on 2026-04-16 13:48:44-04:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="120" LINES="63"]
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol[00m$ time ls
+[?2004l[0m[01;34mcoverage[0m  [01;34mint-search[0m  lab11.LOG  [01;34mmatmul-cache[0m  [01;34mparity[0m
+
+real	0m0.007s
+user	0m0.002s
+sys	0m0.000s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol[00m$ time sleep 5
+[?2004l
+real	0m5.006s
+user	0m0.000s
+sys	0m0.003s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol[00m$ time wc -l `find /etc -type f 2>/dev/null~[K` 2>/dev/nul | tail
+[?2004lbash: /dev/nul: Permission denied
+
+real	0m0.624s
+user	0m0.014s
+sys	0m0.046s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol[00m$ time wc -l `find /etc -type f 2>/dev/null` 2>/dev/nul | tail
+[?2004lbash: /dev/nul: Permission denied
+
+real	0m0.241s
+user	0m0.008s
+sys	0m0.025s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol[00m$ cd parity
+[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ ls
+[?2004lmain.c  Makefile  parity-c.c  parity-s.c
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ cat main.c
+[?2004l#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define DEBUG_OPT  "-d"
+
+int parity_tests(int nTests, int doDebug);
+
+int 
+main(int argc, const char *argv[])
+{
+  int nTests = -1;
+  if (argc == 1 || argc > 3 || 
+      (argc == 3 && strcmp(argv[1], DEBUG_OPT) != 0) ||
+      ((nTests = atoi(argv[argc - 1])) <= 0)) {
+    fprintf(stderr, "usage: %s [%s] NUM_TESTS\n", argv[0], DEBUG_OPT);
+    exit(1);
+  }
+  printf("%d\n", parity_tests(nTests, argc == 3));
+  return 0;
+}	
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ cat parity-c.c
+[?2004l#include <stdio.h>
+#include <stdlib.h>
+
+int 
+parity_tests(int nTests, int doDebug)
+{
+  int sum = 0;
+  for (int i = 0; i < nTests; i++) {
+    int value = rand() & (doDebug ? 0xFF : ~0);
+    //open code count-1s routine
+    int v = value;
+    int nOnes = 0;
+    while (v != 0) {
+      v &= (v - 1);
+      nOnes++;
+    }
+    int isEvenParity = (nOnes & 1) == 0;
+    if (doDebug) {
+      fprintf(stderr, "%x: %d\n", value, isEvenParity);
+    }
+    sum += isEvenParity;
+  }
+  return sum;
+}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ cat parity-c.c[K[K[K[K-s.s
+[?2004lcat: parity-s.s: No such file or directory
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ cat parity-s.s[Kc
+[?2004l#include <stdio.h>
+#include <stdlib.h>
+
+int 
+parity_tests(int nTests, int doDebug)
+{
+  int sum = 0;
+  for (int i = 0; i < nTests; i++) {
+    int value = rand() & (doDebug ? 0xFF : ~0);
+    int isEvenParity = 0;
+    __asm__("testl %1, %1; jpo 1f; movl $1, %0; 1:":
+	    "=r"(isEvenParity):"r"(value),"0"(isEvenParity));
+    if (doDebug) {
+      fprintf(stderr, "%x: %d\n", value, isEvenParity);
+    }
+    sum += isEvenParity;
+  }
+  return sum;
+}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ mkae[K[K[Kake
+[?2004lcc -g -Wall -std=c2x -O1   -c -o parity-c.o parity-c.c
+cc -g -Wall -std=c2x -O1   -c -o main.o main.c
+cc   parity-c.o main.o   -o parity-c
+cc -g -Wall -std=c2x -O1   -c -o parity-s.o parity-s.c
+cc   parity-s.o main.o   -o parity-s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ makecat parity-s.cs[K[K[K[K[K[K[K[K[K[K[K[K[K[K./parity-c -d 10
+[?2004l67: 0
+c6: 1
+69: 1
+73: 0
+51: 0
+ff: 1
+4a: 0
+ec: 0
+29: 0
+cd: 0
+3
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ ./parity-s -d 10
+[?2004l67: 0
+c6: 1
+69: 1
+73: 0
+51: 0
+ff: 1
+4a: 0
+ec: 0
+29: 0
+cd: 0
+3
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ time parity-c 10
+[?2004lbash: parity-c: command not found
+
+real	0m0.006s
+user	0m0.000s
+sys	0m0.001s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ time parity-c 10~[K`[1@~[1P[1@`
+[?2004lbash: parity-c: command not found
+
+real	0m0.001s
+user	0m0.001s
+sys	0m0.000s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ time `parity-c 10`[C[C[C[K[1P[1@.[1@/
+[?2004l3
+
+real	0m0.005s
+user	0m0.000s
+sys	0m0.002s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ time ./parity-c 10[1P 10s 10
+[?2004l3
+
+real	0m0.004s
+user	0m0.001s
+sys	0m0.000s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ time ./parity-c 10
+[?2004l3
+
+real	0m0.005s
+user	0m0.001s
+sys	0m0.000s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ time ./parity-s 10
+[?2004l3
+
+real	0m0.003s
+user	0m0.001s
+sys	0m0.000s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/parity[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/parity[00m$ cd ../matmul-cache
+[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ cat main.c
+[?2004l#define _XOPEN_SOURCE 1
+
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "matmul.h"
+
+static void
+initMatrix(int n, long matrix[][n])
+{
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      matrix[i][j] = lrand48();
+    }
+  }
+}
+
+static void
+out_matrix(int n, long a[][n])
+{
+  FILE *out = stdout;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      fprintf(out, "%ld ", a[i][j]);
+    }
+    fprintf(out, "\n");
+  }
+}
+
+enum { MAX_TEST_MATRIX_SIZE = 6 };
+
+int
+main(int argc, const char *argv[])
+{
+  int matrixSize = -1;
+  int numTests = -1;
+  if (argc != 3 || (matrixSize = atoi(argv[1])) <= 0 ||
+      (numTests = atoi(argv[2])) <= 0) {
+    fprintf(stderr, "usage: %s MATRIX_SIZE N_TRIALS\n", argv[0]);
+    exit(1);
+  }
+  int n = matrixSize;
+  long (*a)[n] = malloc(sizeof(long[n][n]));
+  long (*b)[n] = malloc(sizeof(long[n][n]));
+  long (*c)[n] = malloc(sizeof(long[n][n]));
+  if (!a || !b || !c) {
+    fprintf(stderr, "could not malloc matrices: %s\n", strerror(errno));
+    exit(1);
+  }
+  initMatrix(n, a); initMatrix(n, b);
+  for (int t = 0; t < numTests; t++) {
+    matrix_multiply(n, a, b, c);
+  }
+  if (matrixSize <= MAX_TEST_MATRIX_SIZE) out_matrix(n, c);
+  free(a); free(b); free(c);
+  return 0;
+}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ cat simple-matmul.c
+[?2004l#include "matmul.h"
+
+void
+matrix_multiply(int n, long a[][n], long b[][n], long c[][n])
+{
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      c[i][j] = 0;
+      for (int k = 0; k < n; k++) {
+	c[i][j] += a[i][k]*b[k][j];
+      }
+    }
+  }
+}
+
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ nano [K[K[K[K[Kcat simple-matmul.c[1P simple-matmul.c[1P simple-matmul.c[1P simple-matmul.cn simple-matmul.ca simple-matmul.cn simple-matmul.co simple-matmul.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 15 lines ](B[m[H(B[0;7m  GNU nano 7.2                                         simple-matmul.c                                                  [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[36m#include[39m(B[m (B[0;1m[33m"matmul.h"[4d(B[0m[32mvoid[5d[39m(B[mmatrix_multiply([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m b[][n], [32mlong[39m(B[m c[][n])[6d{[7d (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {[8;5H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[9;7Hc[i][j] = 0;[10;7H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m k = 0; k < n; k++) {[11;9Hc[i][j] += a[i][k]*b[k][j];[12;7H}[13;5H}[14;3H}[15d}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[1;72H(B[0;7m*[119G(B[m[11;60r[11;1HM[1;63r[12;1H[?12l[?25h[?25l[?12l[?25h[A[?25l[?12l[?25h[8G[42m[1K [49m(B[m[?25l[?12l[?25h[1K i[?25l[?12l[?25hn[?25l[?12l[?25h[32mint[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h i[?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h x[?25l[61d[K[?12l[?25h[11;14H[42m [49m(B[m[?25l[?12l[?25h =[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h b[?25l[?12l[?25h[42m [49m(B[m[K[?25l7[12;61r8[12dM[1;63r[11;16H time wc -l `find /etc -type f 2>/dev/null` 2>/dev/null | tail[12d[?12l[?25h[?25l[12;61r[61;1H
+[1;63r[11;78H[?12l[?25h[?25l[?12l[?25h [?25l[11;61r[61;1H
+[1;63r[11;1H[?12l[?25h[?25l7[11;61r8M[1;63r[12;1H[?12l[?25h[?25l[?12l[?25h[13d[?25l[?12l[?25h[A[?25l[?12l[?25h[12;16H[1K c[i][j] += a[i][k]*b[k][j];[12;9H[?25l[?12l[?25h[A[?25l[?12l[?25h[12;9H[?25l[?12l[?25h[8P[?25l[?12l[?25h[A[?25l[?12l[?25h[8G[42m[1K [49m(B[m[?25l[?12l[?25h[1K i[?25l[?12l[?25hn[?25l[?12l[?25h[32mint[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h x[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h =[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h b[?25l[?12l[?25h{[?25l[?12l[?25h [?25l[?12l[?25h[[?25l[?12l[?25hk[?25l[?12l[?25h][?25l[?12l[?25h[[?25l[?12l[?25hj[?25l[?12l[?25h[[?25l[?12l[?25h [?25l[?12l[?25h][?25l[?12l[?25h[12d[?25l[?12l[?25h[11;24H[?25l[?12l[?25h;[?25l[?12l[?25h[12d[?25l[?12l[?25hk[?25l[?12l[?25h][?25l[?12l[?25h*[?25l[?12l[?25hb[?25l[?12l[?25h[[?25l[?12l[?25hk[?25l[?12l[?25h][?25l[?12l[?25h[[?25l[?12l[?25hj[?25l[?12l[?25h][?25l[?12l[?25h;[K[?25l[?12l[?25h;[K[?25l[?12l[?25h;[K[?25l[?12l[?25h;[K[?25l[?12l[?25h;[K[?25l[?12l[?25h;[K[?25l[?12l[?25h;[K[?25l[?12l[?25hx;[?25l[62;16H[15X[62;31H(B[0;7mM-D(B[m DOS Format       [62;61H(B[0;7mM-A(B[m Append[16X[62;93H(B[0;7mB(B[m Backup File[K[63;2H(B[0;7mC(B[m Cancel[16G[15X[63;31H(B[0;7mM-M(B[m Mac Format         [61G(B[0;7mM-P(B[m Prepend[19X[63;91H(B[0;7m^T(B[m Browse[K[61d(B[0;7mFile Name to Write: simple-matmul.c                                                                                     [61;36H(B[m[?12l[?25h[?25l[61;53H[1K (B[0;7m[ Writing... ](B[m[K[1;72H(B[0;7m [119G(B[m[61;52H(B[0;7m[ Wrote 16 lines ](B[m[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location[93G(B[0;7mU(B[m Undo       (B[0;7mM-A(B[m Set Mark[63;2H(B[0;7mX(B[m Exit  [16G(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo [106G(B[0;7mM-6(B[m Copy[?12l[?25h[12;29H[?25l[61d[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ ls -la
+[?2004ltotal 28
+drwxr-x--- 2 hbizier hbizier 4096 Apr 16 13:59 [0m[01;34m.[0m
+drwxr-x--- 6 hbizier hbizier 4096 Apr 16 13:48 [01;34m..[0m
+-rw-r----- 1 hbizier hbizier   30 Apr 16 13:45 .gitignore
+-rw-r----- 1 hbizier hbizier 1282 Apr 16 13:45 main.c
+-rw-r----- 1 hbizier hbizier  339 Apr 16 13:45 Makefile
+-rw-r----- 1 hbizier hbizier  132 Apr 16 13:45 matmul.h
+-rw-r----- 1 hbizier hbizier  273 Apr 16 13:59 simple-matmul.c
+-rw-r----- 1 hbizier hbizier  778 Apr 16 13:45 transpose-matmul.c
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ nano transpose-matmul.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 37 lines ](B[m[H(B[0;7m  GNU nano 7.2                                       transpose-matmul.c                                                 [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[36m#include[39m(B[m (B[0;1m[33m"matmul.h"[4d[36m#include[33m <errno.h>[5d[36m#include[33m <stdio.h>[6d[36m#include[33m <stdlib.h>[7d[36m#include[33m <string.h>[9d[34m/** Fill in matrix t[n][n] as the transpose of matrix a[n][n].  That is,[10d *  for all i, j set t[i][j] to a[j][i].[11d */[12d(B[0m[32mstatic[39m(B[m [32mvoid[13d[39m(B[mmatrix_transpose([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m t[][n])[14d{[15d (B[0;1m[34m//@[37m[43mTODO[39;49m[34m add your code here[16d[39m(B[m}[19d[32mvoid[20d[39m(B[mmatrix_multiply([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m b[][n], [32mlong[39m(B[m c[][n])[21d{[22d [32mlong[39m(B[m (*tmp)[n] = malloc([32msizeof[39m(B[m([32mlong[39m(B[m[n][n]));[23;3H(B[0;1m[33mif[39m(B[m (!tmp) {[24;5Hfprintf(stderr, (B[0;1m[33m"could not malloc transpose matrix: %s\n"[39m(B[m,[25;13Hstrerror(errno));[26;5Hexit(1);[27;3H}[28dmatrix_transpose(n, b, tmp);[29;3H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {[30;5H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[31;7Hc[i][j] = 0;[32;7H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m k = 0; k < n; k++) {[33;9Hc[i][j] += a[i][k]*tmp[j][k];[34;7H}[35;5H}[36;3H}[37dfree(tmp);[38d}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[?12l[?25h[12d[?25l[?12l[?25h[13d[?25l[?12l[?25h[14d[?25l[?12l[?25h[16d[?25l[?12l[?25h[17d[?25l[?12l[?25h[18d[?25l[?12l[?25h[19d[?25l[?12l[?25h[20d[?25l[?12l[?25h[A[?25l[61d[K[?12l[?25h[18d[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[62d[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ nano transpose-matmul.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 37 lines ](B[m[H(B[0;7m  GNU nano 7.2                                       transpose-matmul.c                                                 [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[36m#include[39m(B[m (B[0;1m[33m"matmul.h"[4d[36m#include[33m <errno.h>[5d[36m#include[33m <stdio.h>[6d[36m#include[33m <stdlib.h>[7d[36m#include[33m <string.h>[9d[34m/** Fill in matrix t[n][n] as the transpose of matrix a[n][n].  That is,[10d *  for all i, j set t[i][j] to a[j][i].[11d */[12d(B[0m[32mstatic[39m(B[m [32mvoid[13d[39m(B[mmatrix_transpose([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m t[][n])[14d{[15d (B[0;1m[34m//@[37m[43mTODO[39;49m[34m add your code here[16d[39m(B[m}[19d[32mvoid[20d[39m(B[mmatrix_multiply([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m b[][n], [32mlong[39m(B[m c[][n])[21d{[22d [32mlong[39m(B[m (*tmp)[n] = malloc([32msizeof[39m(B[m([32mlong[39m(B[m[n][n]));[23;3H(B[0;1m[33mif[39m(B[m (!tmp) {[24;5Hfprintf(stderr, (B[0;1m[33m"could not malloc transpose matrix: %s\n"[39m(B[m,[25;13Hstrerror(errno));[26;5Hexit(1);[27;3H}[28dmatrix_transpose(n, b, tmp);[29;3H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {[30;5H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[31;7Hc[i][j] = 0;[32;7H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m k = 0; k < n; k++) {[33;9Hc[i][j] += a[i][k]*tmp[j][k];[34;7H}[35;5H}[36;3H}[37dfree(tmp);[38d}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[?12l[?25h[12d[?25l[?12l[?25h[13d[?25l[?12l[?25h[14d[?25l[?12l[?25h[15d[?25l[1;73H(B[0;7m*[119G(B[m[15;61r[61;1H
+[1;63r[60;1H[K[15d[?12l[?25h[?25l7[15;61r8M[1;63r[16;1H[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[61d[?12l[?25h[13d[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[?12l[?25h[12d[?25l[?12l[?25h[13d[?25l[?12l[?25h[14d[?25l[?12l[?25h[17d[?25l[?12l[?25h[19d[?25l[?12l[?25h[21d[?25l[?12l[?25h[22d[?25l[?12l[?25h[23d[?25l[?12l[?25h[21d[?25l[?12l[?25h[16d[?25l[?12l[?25h[11d[?25l[?12l[?25h[4d[?25l[?12l[?25h[2d[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[7d[?25l[?12l[?25h[10d[?25l[?12l[?25h[16d[?25l[?12l[?25h[17d[?25l[?12l[?25h[22d[?25l[?12l[?25h[26d[?25l[?12l[?25h[30d[?25l[?12l[?25h[35d[?25l[?12l[?25h[39d[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[61d(B[0;7mSave modified buffer?                                                                                                   [62;1H Y(B[m Yes[K[63d(B[0;7m N(B[m No  [63;16H (B[0;7m^C(B[m Cancel[K[61;23H[?12l[?25h[?25l[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ nano transpose-matmul.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 37 lines ](B[m[H(B[0;7m  GNU nano 7.2                                       transpose-matmul.c                                                 [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[36m#include[39m(B[m (B[0;1m[33m"matmul.h"[4d[36m#include[33m <errno.h>[5d[36m#include[33m <stdio.h>[6d[36m#include[33m <stdlib.h>[7d[36m#include[33m <string.h>[9d[34m/** Fill in matrix t[n][n] as the transpose of matrix a[n][n].  That is,[10d *  for all i, j set t[i][j] to a[j][i].[11d */[12d(B[0m[32mstatic[39m(B[m [32mvoid[13d[39m(B[mmatrix_transpose([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m t[][n])[14d{[15d (B[0;1m[34m//@[37m[43mTODO[39;49m[34m add your code here[16d[39m(B[m}[19d[32mvoid[20d[39m(B[mmatrix_multiply([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m b[][n], [32mlong[39m(B[m c[][n])[21d{[22d [32mlong[39m(B[m (*tmp)[n] = malloc([32msizeof[39m(B[m([32mlong[39m(B[m[n][n]));[23;3H(B[0;1m[33mif[39m(B[m (!tmp) {[24;5Hfprintf(stderr, (B[0;1m[33m"could not malloc transpose matrix: %s\n"[39m(B[m,[25;13Hstrerror(errno));[26;5Hexit(1);[27;3H}[28dmatrix_transpose(n, b, tmp);[29;3H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {[30;5H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[31;7Hc[i][j] = 0;[32;7H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m k = 0; k < n; k++) {[33;9Hc[i][j] += a[i][k]*tmp[j][k];[34;7H}[35;5H}[36;3H}[37dfree(tmp);[38d}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[?12l[?25h[12d[?25l[?12l[?25h[13d[?25l[?12l[?25h[14d[?25l[?12l[?25h[15d[?25l[1;73H(B[0;7m*[119G(B[m[15;61r[61;1H
+[1;63r[60;1H[K[15d[?12l[?25h[?25l7[15;61r8M[1;63r[16;1H[?12l[?25h[?25l[?12l[?25h[A[?25l[61d[15;61r[15;1H[4T[1;63r[15;1H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {[16;5H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[17;7Hc[i][j] = 0;[18;7H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m k = 0; k < n; k++) {[19;9Hc[i][j] += a[i][k]*b[k][j];[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[18;36H[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h)[?25l[?12l[?25h [?25l[?12l[?25h{[?25l[?12l[?25h[19d[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[8G[1K (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {[15;9H[?25l[?12l[?25h[?25l[?12l[?25h[A{[?25l[?12l[?25h[15d[?25l[?12l[?25h[16d [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[1P   [?25l[?12l[?25h[1P  [?25l[?12l[?25h[1P [?25l[?12l[?25h[1P[?25l[16;61r[61;1H
+[1;63r[15;38H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[15;38H[?12l[?25h[?25l7[16;61r8[16dM[1;63r[15;38H[K[16d(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[?12l[?25h[?25l[?12l[?25hmfor ([32mint[39m(B[m j = 0; j < n; j++) {m[?25l[?12l[?25h(B[0;1m[33mfor[39m(B[m[1P[?25l[?12l[?25h (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) { [?25l[?12l[?25h  (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {  [?25l[?12l[?25h   (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {   [?25l[?12l[?25h    (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[5G[?25l[?12l[?25h[A[?25l[?12l[?25h[15;9H[?25l[?12l[?25h[8P[?25l[?12l[?25h (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) { [?25l[?12l[?25h  (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {  [?25l[?12l[?25h[16d[?25l[?12l[?25h[17d[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25hc[?25l[?12l[?25h[[?25l[?12l[?25hi[?25l[?12l[?25h][?25l[?12l[?25h[[?25l[?12l[?25hj[?25l[?12l[?25h][?25l[?12l[?25h [?25l[?12l[?25h=[?25l[?12l[?25h [?25l[?12l[?25h0[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[18d[?25l[18;61r[61;1H
+[1;63r[18;1H[?12l[?25h[?25l[18;61r[61;1H
+[1;63r[18;1H[?12l[?25h[?25l[?12l[?25h[A[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25hc[?25l[?12l[?25h[1P[?25l[?12l[?25ht[i][j] = 0;[8G[?25l[?12l[?25h[[?25l[?12l[?25hi[?25l[?12l[?25h][?25l[?12l[?25h[[?25l[?12l[?25hj[?25l[?12l[?25h][?25l[?12l[?25h [?25l[?12l[?25h=[?25l[?12l[?25h [?25l[?12l[?25h0[?25l[?12l[?25h;[K[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[1P[?25l[?12l[?25hk][j] = ;[17;10H[?25l[?12l[?25h[1P[?25l[?12l[?25hj][j] = ;[17;10H[?25l[?12l[?25h][?25l[?12l[?25h[[?25l[?12l[?25hj[?25l[?12l[?25h] = ;[K[12G[?25l[?12l[?25hi] = ;[13G[?25l[?12l[?25h][?25l[?12l[?25h [?25l[?12l[?25h=[?25l[?12l[?25h [?25l[?12l[?25ha;[?25l[?12l[?25h[;[?25l[?12l[?25hi;[?25l[?12l[?25h;[K[?25l[?12l[?25hj;[?25l[?12l[?25h];[?25l[?12l[?25h[;[?25l[?12l[?25hi;[?25l[?12l[?25h];[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[1P[?25l[?12l[?25hj] = a[j][i];[17;13H[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25hj[?25l[?12l[?25h[1P[?25l[?12l[?25hi][j] = a[j][i];[17;10H[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[C[?25l[?12l[?25h [?25l[?12l[?25hi[?25l[?12l[?25h[1P[?25l[?12l[?25hj = 0; i < n; i++) {[15;13H[?25l[?12l[?25h[16d[?25l[?12l[?25h [?25l[?12l[?25hj[?25l[?12l[?25h[1P[?25l[?12l[?25hi = 0; j < n; j++) {[16;15H[?25l[?12l[?25h[A[?25l[?12l[?25h [?25l[?12l[?25h0[?25l[?12l[?25h;[?25l[?12l[?25h [?25l[?12l[?25hi[?25l[?12l[?25h[1P[?25l[?12l[?25hj < n; i++) {[15;20H[?25l[?12l[?25h[16d[?25l[?12l[?25h [?25l[?12l[?25hj[?25l[?12l[?25h[1P[?25l[?12l[?25hi < n; j++) {[16;22H[?25l[?12l[?25h[A[?25l[?12l[?25h [?25l[?12l[?25hn[?25l[?12l[?25h;[?25l[?12l[?25h [?25l[?12l[?25hi[?25l[?12l[?25h++) {[K[26G[?25l[?12l[?25hj++) {[27G[?25l[?12l[?25h[16d[?25l[?12l[?25h [?25l[?12l[?25hj[?25l[?12l[?25h++) {[K[28G[?25l[?12l[?25hi++) {[29G[?25l[62;16H[15X[62;31H(B[0;7mM-D(B[m DOS Format       [62;61H(B[0;7mM-A(B[m Append[16X[62;93H(B[0;7mB(B[m Backup File[K[63;2H(B[0;7mC(B[m Cancel[16G[15X[63;31H(B[0;7mM-M(B[m Mac Format         [61G(B[0;7mM-P(B[m Prepend[19X[63;91H(B[0;7m^T(B[m Browse[K[61d(B[0;7mFile Name to Write: transpose-matmul.c                                                                                  [61;39H(B[m[?12l[?25h[?25l[61;53H[1K (B[0;7m[ Writing... ](B[m[K[1;73H(B[0;7m [119G(B[m[61;52H(B[0;7m[ Wrote 39 lines ](B[m[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location[93G(B[0;7mU(B[m Undo       (B[0;7mM-A(B[m Set Mark[63;2H(B[0;7mX(B[m Exit  [16G(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo [106G(B[0;7mM-6(B[m Copy[?12l[?25h[16;29H[?25l[61d[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ make
+[?2004lcc -g -Wall -std=c2x -O1   -c -o main.o main.c
+cc -g -Wall -std=c2x -O1   -c -o simple-matmul.o simple-matmul.c
+cc main.o simple-matmul.o  -o simple-matmul
+cc -g -Wall -std=c2x -O1   -c -o transpose-matmul.o transpose-matmul.c
+[01m[Ktranspose-matmul.c:[m[K In function ‘[01m[Kmatrix_transpose[m[K’:
+[01m[Ktranspose-matmul.c:39:1:[m[K [01;31m[Kerror: [m[Kexpected declaration or statement at end of input
+   39 | [01;31m[K}[m[K
+      | [01;31m[K^[m[K
+[01m[Ktranspose-matmul.c:39:1:[m[K [01;31m[Kerror: [m[Kexpected declaration or statement at end of input
+[01m[Ktranspose-matmul.c:[m[K At top level:
+[01m[Ktranspose-matmul.c:21:1:[m[K [01;35m[Kwarning: [m[K‘[01m[Kmatrix_multiply[m[K’ defined but not used [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-function-Wunused-function]8;;[m[K]
+   21 | [01;35m[Kmatrix_multiply[m[K(int n, long a[][n], long b[][n], long c[][n])
+      | [01;35m[K^~~~~~~~~~~~~~~[m[K
+make: *** [<builtin>: transpose-matmul.o] Error 1
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ makenano transpose-matmul.cls -la[Knano transpose-matmul.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 39 lines ](B[m[H(B[0;7m  GNU nano 7.2                                       transpose-matmul.c                                                 [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[36m#include[39m(B[m (B[0;1m[33m"matmul.h"[4d[36m#include[33m <errno.h>[5d[36m#include[33m <stdio.h>[6d[36m#include[33m <stdlib.h>[7d[36m#include[33m <string.h>[9d[34m/** Fill in matrix t[n][n] as the transpose of matrix a[n][n].  That is,[10d *  for all i, j set t[i][j] to a[j][i].[11d */[12d(B[0m[32mstatic[39m(B[m [32mvoid[13d[39m(B[mmatrix_transpose([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m t[][n])[14d{[15d (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[16;5H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {[17;7Ht[i][j] = a[j][i];[18d}[21d[32mvoid[22d[39m(B[mmatrix_multiply([32mint[39m(B[m n, [32mlong[39m(B[m a[][n], [32mlong[39m(B[m b[][n], [32mlong[39m(B[m c[][n])[23d{[24d [32mlong[39m(B[m (*tmp)[n] = malloc([32msizeof[39m(B[m([32mlong[39m(B[m[n][n]));[25;3H(B[0;1m[33mif[39m(B[m (!tmp) {[26;5Hfprintf(stderr, (B[0;1m[33m"could not malloc transpose matrix: %s\n"[39m(B[m,[27;13Hstrerror(errno));[28;5Hexit(1);[29;3H}[30dmatrix_transpose(n, b, tmp);[31;3H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i < n; i++) {[32;5H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m j = 0; j < n; j++) {[33;7Hc[i][j] = 0;[34;7H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m k = 0; k < n; k++) {[35;9Hc[i][j] += a[i][k]*tmp[j][k];[36;7H}[37;5H}[38;3H}[39dfree(tmp);[40d}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[?12l[?25h[12d[?25l[?12l[?25h[13d[?25l[?12l[?25h[14d[?25l[?12l[?25h[15d[?25l[?12l[?25h[16d[?25l[?12l[?25h[17d[?25l[?12l[?25h[18d[?25l[?12l[?25h[19d[?25l[?12l[?25h[A}[?25l[?12l[?25h[?25l[61d[K[?12l[?25h[18d}[?25l[?12l[?25h[?25l[?12l[?25h[17;25H[?25l[?12l[?25h[18d}[?25l[1;73H(B[0;7m*[119G(B[m[19;61r[19;1HM[1;63r[19;1H[?12l[?25h[?25l[?12l[?25h[A[?25l[?12l[?25h}[?25l[?12l[?25h[19d[?25l[?12l[?25h[A[?25l[?12l[?25h}[?25l[?12l[?25h[K[?25l[18;61r[61;1H
+[1;63r[17;25H[?12l[?25h[?25l7[18;61r8[18dM[1;63r[18;1H[?12l[?25h[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h    }[?25l7[19;61r8[19dM[1;63r[19;1H[?12l[?25h[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h [?25l[?12l[?25h  }[?25l7[20;61r8[20dM[1;63r[20;1H[?12l[?25h[?25l[?12l[?25h}[?25l[?12l[?25h[21d[?25l[21;61r[61;1H
+[1;63r[20;2H[?12l[?25h[?25l[?12l[?25h[21d[?25l[21;61r[61;1H
+[1;63r[20;2H[?12l[?25h[?25l[62;16H[15X[62;31H(B[0;7mM-D(B[m DOS Format       [62;61H(B[0;7mM-A(B[m Append[16X[62;93H(B[0;7mB(B[m Backup File[K[63;2H(B[0;7mC(B[m Cancel[16G[15X[63;31H(B[0;7mM-M(B[m Mac Format         [61G(B[0;7mM-P(B[m Prepend[19X[63;91H(B[0;7m^T(B[m Browse[K[61d(B[0;7mFile Name to Write: transpose-matmul.c                                                                                  [61;39H(B[m[?12l[?25h[?25l[61;53H[1K (B[0;7m[ Writing... ](B[m[K[1;73H(B[0;7m [119G(B[m[61;52H(B[0;7m[ Wrote 40 lines ](B[m[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location[93G(B[0;7mU(B[m Undo       (B[0;7mM-A(B[m Set Mark[63;2H(B[0;7mX(B[m Exit  [16G(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo [106G(B[0;7mM-6(B[m Copy[?12l[?25h[20d}[?25l[61d[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ nano transpose-matmul.cmake[K
+[?2004lcc -g -Wall -std=c2x -O1   -c -o transpose-matmul.o transpose-matmul.c
+cc main.o transpose-matmul.o  -o transpose-matmul
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ ./simplema[K[K[Ke-matmul 4 1
+[?2004l222116499432056181 702728943884103282 976657005958358887 208305681995216427 
+2176158101476803373 2167723090326847514 3402130874294067226 1227295663821196557 
+4864941978546427201 4488031060263621944 7270457362798475378 2871901060616694345 
+7687094395803773517 2148127355329309527 5999033094807106893 4122693175977677129 
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ ./transpose -matmul 4 1[1P
+[?2004l222116499432056181 702728943884103282 976657005958358887 208305681995216427 
+2176158101476803373 2167723090326847514 3402130874294067226 1227295663821196557 
+4864941978546427201 4488031060263621944 7270457362798475378 2871901060616694345 
+7687094395803773517 2148127355329309527 5999033094807106893 4122693175977677129 
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ time ./simple-matmul 1500 1
+[?2004lt 
+real	0m2.647s
+user	0m2.632s
+sys	0m0.012s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ time ./s[Ktranspose-matmul 1500 1
+[?2004l
+real	0m2.042s
+user	0m1.847s
+sys	0m0.004s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ [7mfor s in `seq 2000 1000 4000`; [27mfor s in `seq 2000 1000 4000`;  [K[K |[K\
+[?2004l[?2004h> do |[K\
+[?2004l[?2004h> [7mecho -n "*** Size $s: simple"; time ./simple-matmul $s 1 ; echo ; \[27m[C[Cecho -n "*** Size $s: simple"; time ./simple-matmul $s 1 ; echo ; \
+[?2004l[?2004h> [7mecho -n "*** Size $s: transpose"; time ./transpose-matmul $s 1 ; echo ; \[27m[C[Cecho -n "*** Size $s: transpose"; time ./transpose-matmul $s 1 ; echo ; \
+[?2004l[?2004h> done
+[?2004l*** Size 2000: simple
+real	0m6.632s
+user	0m6.610s
+sys	0m0.008s
+
+*** Size 2000: transpose
+real	0m4.782s
+user	0m4.758s
+sys	0m0.016s
+
+*** Size 3000: simple
+real	0m29.668s
+user	0m29.627s
+sys	0m0.032s
+
+*** Size 3000: transpose
+real	0m17.088s
+user	0m17.031s
+sys	0m0.044s
+
+*** Size 4000: simple
+real	1m36.407s
+user	1m36.334s
+sys	0m0.036s
+
+*** Size 4000: transpose
+real	0m40.664s
+user	0m40.502s
+sys	0m0.144s
+
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/matmul-cache[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/matmul-cache[00m$ cd ../int-search
+[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ ca[K[Kls -la
+[?2004ltotal 32
+drwxr-x--- 2 hbizier hbizier 4096 Apr 16 13:45 [0m[01;34m.[0m
+drwxr-x--- 6 hbizier hbizier 4096 Apr 16 13:48 [01;34m..[0m
+-rw-r----- 1 hbizier hbizier  282 Apr 16 13:45 binary-search.c
+-rw-r----- 1 hbizier hbizier   28 Apr 16 13:45 .gitignore
+-rw-r----- 1 hbizier hbizier  177 Apr 16 13:45 int_compare.c
+-rw-r----- 1 hbizier hbizier  221 Apr 16 13:45 int_compare.h
+-rw-r----- 1 hbizier hbizier  179 Apr 16 13:45 linear-search.c
+-rw-r----- 1 hbizier hbizier 1086 Apr 16 13:45 main.c
+-rw-r----- 1 hbizier hbizier  244 Apr 16 13:45 Makefile
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ cat main.c
+[?2004l#include "int_compare.h"
+
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+/** Return index of element in a[nElements]; < 0 if not found. */
+int search_for_element(int a[], int nElements, int element);
+
+
+/** Perform nTests searches for all elements in a[].  
+ */
+static void
+do_search(int a[], int nElements, int nTests)
+{
+  for (int t = 0; t < nTests; t++) {
+    for (int i = 0; i < nElements; i++) {
+      int foundIndex = search_for_element(a, nElements, a[i]);
+      assert(foundIndex == i);
+      int foundIndex1 = search_for_element(a, nElements, a[i] + 1);
+      assert(foundIndex1 < 0 || foundIndex1 == i + 1);
+    }
+  }
+}
+
+int 
+main(int argc, const char *argv[])
+{
+  int nTests = -1;
+  int nElements = -1;
+  if (argc != 3 || (nElements = atoi(argv[1])) <= 0 ||
+      (nTests = atoi(argv[2])) <= 0) {
+    fprintf(stderr, "usage: %s NUM_ELEMENTS NUM_TESTS\n", argv[0]);
+    exit(1);
+  }
+  int a[nElements];
+  for (int i = 0; i < nElements; i++) {
+    a[i] = rand();
+  }
+  qsort(a, nElements, sizeof(int), int_compare);
+  do_search(a, nElements, nTests);
+  return 0;
+}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ nano linear-search.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;53H(B[0;7m[ Read 6 lines ](B[m[H(B[0;7m  GNU nano 7.2                                         linear-search.c                                                  [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[34m/** Return index of element in a[nElements]; < 0 if not found. */[3d(B[0m[32mint[4d[39m(B[msearch_for_element([32mint[39m(B[m a[], [32mint[39m(B[m nElements, [32mint[39m(B[m element)[5d{[6d (B[0;1m[34m//@[37m[43mTODO[39;49m[34m add your code here to meet above spec.[7d[39m(B[m}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[1;72H(B[0;7m*[119G(B[m[6;61r[61;1H
+[1;63r[60;1H[K[6d[?12l[?25h[?25l7[6;61r8M[1;63r[7;1H[?12l[?25h[?25l[?12l[?25h[A[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h  f[?25l[?12l[?25ho[?25l[?12l[?25h(B[0;1m[33mfor[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h i[?25l[?12l[?25hn[?25l[?12l[?25h[32mint[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h [?25l[?12l[?25hin[K[?25l[61d[?12l[?25h[6;8H [?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h ([?25l[?12l[?25hi[?25l[?12l[?25hn[?25l[?12l[?25h[32mint[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h i[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h =[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h 0[?25l[?12l[?25h;[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h i[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h >[?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h <[?25l[?12l[?25h=[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h n[?25l[?12l[?25hE[?25l[?12l[?25hl[?25l[?12l[?25he[?25l[?12l[?25hm[?25l[?12l[?25he[?25l[?12l[?25hn[?25l[?12l[?25ht[?25l[?12l[?25hs[?25l[?12l[?25h;[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h i[?25l[?12l[?25h+[?25l[?12l[?25h+[?25l[?12l[?25h)[?25l[?12l[?25h{[?25l7[7;61r8[7dM[1;63r[7;1H[?12l[?25h[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h    i[?25l[?12l[?25h(B[0;1m[33mif[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h [?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h e[?25l[?12l[?25hl[?25l[?12l[?25he[?25l[?12l[?25hm[?25l[?12l[?25hn[?25l[?12l[?25ht[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25he[?25l[?12l[?25hn[?25l[?12l[?25ht[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h =[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h [?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h i[?25l[?12l[?25hn[?25l[?12l[?25h[32mint[39m(B[m[?25l[?12l[?25hinta[?25l[?12l[?25h[[?25l[?12l[?25hi[?25l[?12l[?25h][?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25ha[i][K[?25l[?12l[?25ha[i][K[?25l[?12l[?25ha[i][K[?25l[?12l[?25ha[?25l[?12l[?25h[?25l[?12l[?25h(a[i][?25l[?12l[?25ha[?25l[?12l[?25h[[?25l[?12l[?25hi[?25l[?12l[?25h][?25l[?12l[?25h[8d[?25l[?12l[?25h[7;13H[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h >[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h [?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h =[?25l[?12l[?25h=[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h e[?25l[?12l[?25hl[?25l[?12l[?25he[?25l[?12l[?25hm[?25l[?12l[?25he[?25l[?12l[?25hn[?25l[?12l[?25ht[?25l[?12l[?25h)[?25l[?12l[?25h{[?25l7[8;61r8[8dM[1;63r[8;1H[?12l[?25h[?25l[?12l[?25h[8G[42m[1K [49m(B[m[?25l[?12l[?25h[K[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[1K r[?25l[?12l[?25he[?25l[?12l[?25ht[?25l[?12l[?25hu[?25l[?12l[?25hn[?25l[?12l[?25hr[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25hr[?25l[?12l[?25h[7G[35mreturn[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h i[?25l[?12l[?25h;[?25l7[9;61r8[9dM[1;63r[9;1H[?12l[?25h[?25l[?12l[?25h[8G[42m[1K [49m(B[m[?25l[?12l[?25h[K[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h    e[?25l[?12l[?25hl[?25l[?12l[?25h [?25l[?12l[?25h[42m    [49m(B[m[K[?25l[?12l[?25h    e[?25l[?12l[?25hl[?25l[?12l[?25hs[?25l[?12l[?25h(B[0;1m[33melse[39m(B[m[?25l7[10;61r8[10dM[1;63r[10;1H[?12l[?25h[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[1K r[?25l[?12l[?25he[?25l[?12l[?25ht[?25l[?12l[?25hu[?25l[?12l[?25hr[?25l[?12l[?25h[7G[35mreturn[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h 0[?25l[?12l[?25h;[?25l7[11;61r8[11dM[1;63r[11;1H[?12l[?25h[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[A[?25l[?12l[?25h[11d[?25l[?12l[?25h [?25l[?12l[?25h[K[?25l[11;61r[61;1H
+[1;63r[10;16H[?12l[?25h[?25l[?12l[?25h[9;9H[?25l[?12l[?25h[8;16H[?25l[?12l[?25h[9d[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[8d[?25l[?12l[?25h[7;26H[?25l[?12l[?25h [?25l[?12l[?25h[8;16H[?25l[?12l[?25h[9;9H[?25l[?12l[?25h[10;16H[?25l7[11;61r8[11dM[1;63r[11;1H[?12l[?25h[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h  }[?25l[62;16H[15X[62;31H(B[0;7mM-D(B[m DOS Format       [62;61H(B[0;7mM-A(B[m Append[16X[62;93H(B[0;7mB(B[m Backup File[K[63;2H(B[0;7mC(B[m Cancel[16G[15X[63;31H(B[0;7mM-M(B[m Mac Format         [61G(B[0;7mM-P(B[m Prepend[19X[63;91H(B[0;7m^T(B[m Browse[K[61d(B[0;7mFile Name to Write: linear-search.c                                                                                     [61;36H(B[m[?12l[?25h[?25l[61;53H[1K (B[0;7m[ Writing... ](B[m[K[1;72H(B[0;7m [119G(B[m[61;52H(B[0;7m[ Wrote 11 lines ](B[m[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location[93G(B[0;7mU(B[m Undo       (B[0;7mM-A(B[m Set Mark[63;2H(B[0;7mX(B[m Exit  [16G(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo [106G(B[0;7mM-6(B[m Copy[?12l[?25h[11;4H[?25l[61d[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ make
+[?2004lcc -g -Wall -std=c2x -O1   -c -o linear-search.o linear-search.c
+[01m[Klinear-search.c:[m[K In function ‘[01m[Ksearch_for_element[m[K’:
+[01m[Klinear-search.c:11:1:[m[K [01;35m[Kwarning: [m[Kcontrol reaches end of non-void function [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wreturn-type-Wreturn-type]8;;[m[K]
+   11 | [01;35m[K}[m[K
+      | [01;35m[K^[m[K
+cc -g -Wall -std=c2x -O1   -c -o main.o main.c
+cc -g -Wall -std=c2x -O1   -c -o int_compare.o int_compare.c
+cc   linear-search.o main.o int_compare.o   -o linear-search
+cc -g -Wall -std=c2x -O1   -c -o binary-search.o binary-search.c
+cc   binary-search.o main.o int_compare.o   -o binary-search
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ makenano linear-search.cmake[K[Kmakenano linear-search.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 11 lines ](B[m[H(B[0;7m  GNU nano 7.2                                         linear-search.c                                                  [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[34m/** Return index of element in a[nElements]; < 0 if not found. */[3d(B[0m[32mint[4d[39m(B[msearch_for_element([32mint[39m(B[m a[], [32mint[39m(B[m nElements, [32mint[39m(B[m element)[5d{[6d (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i <= nElements; i++){[7;5H(B[0;1m[33mif[39m(B[m (a[i] == element)[8;7H[35mreturn[39m(B[m i;[9;5H(B[0;1m[33melse[10d(B[0m[35mreturn[39m(B[m 0;[11;3H}[12d}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h}[?25l[?12l[?25h[A[?25l[?12l[?25h[11d[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h [?25l[?12l[?25h [?25l[61d[K[?12l[?25h[8;7H[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h [?25l[?12l[?25hi[?25l[?12l[?25h;[?25l[62d[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ nano linear-search.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 11 lines ](B[m[H(B[0;7m  GNU nano 7.2                                         linear-search.c                                                  [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[34m/** Return index of element in a[nElements]; < 0 if not found. */[3d(B[0m[32mint[4d[39m(B[msearch_for_element([32mint[39m(B[m a[], [32mint[39m(B[m nElements, [32mint[39m(B[m element)[5d{[6d (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i <= nElements; i++){[7;5H(B[0;1m[33mif[39m(B[m (a[i] == element)[8;7H[35mreturn[39m(B[m i;[9;5H(B[0;1m[33melse[10d(B[0m[35mreturn[39m(B[m 0;[11;3H}[12d}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[1;72H(B[0;7m*[119G(B[m[11;60r[60;1H
+[1;63r[10;18H}[?12l[?25h[?25l[?12l[?25h[9;9H[?25l[?12l[?25hels[K[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[42m    [49m(B[m[K[?25l[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h  }[42m  [49m(B[m[?25l[?12l[?25h[10d[?25l[61d[K[?12l[?25h[11d}[?25l[?12l[?25h[A  [?25l[?12l[?25h[A[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[10d[?25l[61d(B[0;7mSave modified buffer?                                                                                                   [62;1H Y(B[m Yes[K[63d(B[0;7m N(B[m No  [63;16H (B[0;7m^C(B[m Cancel[K[61;23H[?12l[?25h[?25l[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ nano linear-search.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 11 lines ](B[m[H(B[0;7m  GNU nano 7.2                                         linear-search.c                                                  [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[34m/** Return index of element in a[nElements]; < 0 if not found. */[3d(B[0m[32mint[4d[39m(B[msearch_for_element([32mint[39m(B[m a[], [32mint[39m(B[m nElements, [32mint[39m(B[m element)[5d{[6d (B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i <= nElements; i++){[7;5H(B[0;1m[33mif[39m(B[m (a[i] == element)[8;7H[35mreturn[39m(B[m i;[9;5H(B[0;1m[33melse[10d(B[0m[35mreturn[39m(B[m 0;[11;3H}[12d}[2d[?12l[?25h[?25l[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h{[?25l[1;72H(B[0;7m*[119G(B[m[6;60r[6;1HM[1;63r[6;1H[?12l[?25h[?25l[?12l[?25h[7d[?25l[?12l[?25h [?25l[?12l[?25h[A[?25l[?12l[?25h[7d[?25l[?12l[?25h [?25l[?12l[?25h[A[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h  i[?25l[61d[K[?12l[?25h[6;4Hn[?25l[?12l[?25h[32mint[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h i[?25l[?12l[?25hn[?25l[?12l[?25hd[?25l[?12l[?25he[?25l[?12l[?25hx[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h =[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h 0[?25l[?12l[?25h;[?25l[?12l[?25h [?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h [?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h [?25l[?12l[?25h;[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h [?25l[?12l[?25h[?25l[?12l[?25h[7Gretur i;[K[?25l[?12l[?25h i;[K[?25l[?12l[?25h i;[K[?25l[?12l[?25h i;[K[?25l[?12l[?25h i;[K[?25l[?12l[?25h i;[K[?25l[?12l[?25h [?25l[?12l[?25hi[?25l[?12l[?25h;[K[?25l[?12l[?25h;[K[?25l[?12l[?25hi;[?25l[?12l[?25hn;[?25l[?12l[?25hd;[?25l[?12l[?25he;[?25l[?12l[?25hx;[?25l[?12l[?25h ;[?25l[?12l[?25h=;[?25l[?12l[?25hi;[?25l[?12l[?25h;[K[?25l[?12l[?25h ;[?25l[?12l[?25hi;[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[?25l[?12l[?25h ;[?25l[?12l[?25h=;[?25l[?12l[?25h ;[?25l[?12l[?25h-;[?25l[?12l[?25h1;[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10;9H[?25l[?12l[?25h[11;16H[?25l[?12l[?25h [?25l[?12l[?25h[42m [49m(B[m[K[?25l[?12l[?25h [?25l[?12l[?25h[7Gretur[K[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[42m[1K [49m(B[m [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[K[?25l[11;61r[61;1H
+[1;63r[10;9H[?12l[?25h[?25l[?12l[?25hels[K[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[42m    [49m(B[m[K[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[K[?25l[10;61r[61;1H
+[1;63r[9;17H[?12l[?25h[?25l[62;16H[15X[62;31H(B[0;7mM-D(B[m DOS Format       [62;61H(B[0;7mM-A(B[m Append[16X[62;93H(B[0;7mB(B[m Backup File[K[63;2H(B[0;7mC(B[m Cancel[16G[15X[63;31H(B[0;7mM-M(B[m Mac Format         [61G(B[0;7mM-P(B[m Prepend[19X[63;91H(B[0;7m^T(B[m Browse[K[61d(B[0;7mFile Name to Write: linear-search.c                                                                                     [61;36H(B[m[?12l[?25h[?25l[61;53H[1K (B[0;7m[ Writing... ](B[m[K[1;72H(B[0;7m [119G(B[m[61;52H(B[0;7m[ Wrote 10 lines ](B[m[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location[93G(B[0;7mU(B[m Undo       (B[0;7mM-A(B[m Set Mark[63;2H(B[0;7mX(B[m Exit  [16G(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo [106G(B[0;7mM-6(B[m Copy[?12l[?25h[9;17H[?25l[61d[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ nano linear-search.c
+[?2004l[?2004h[?1049h[22;0;0t[1;63r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[61;54H(B[0;7m[ Reading... ](B[m[61;52H(B[0;7m[ Read 10 lines ](B[m[H(B[0;7m  GNU nano 7.2                                         linear-search.c                                                  [1;119H(B[m[62d(B[0;7m^G(B[m Help[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location    (B[0;7mM-U(B[m Undo[106G(B[0;7mM-A(B[m Set Mark[63d(B[0;7m^X(B[m Exit[63;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo[106G(B[0;7mM-6(B[m Copy[2d(B[0;1m[34m/** Return index of element in a[nElements]; < 0 if not found. */[3d(B[0m[32mint[4d[39m(B[msearch_for_element([32mint[39m(B[m a[], [32mint[39m(B[m nElements, [32mint[39m(B[m element)[5d{[6d [32mint[39m(B[m index = -1;[7;3H(B[0;1m[33mfor[39m(B[m ([32mint[39m(B[m i = 0; i <= nElements; i++){[8;5H(B[0;1m[33mif[39m(B[m (a[i] == element)[9;7Hindex = i;[10;3H}[11d}[2d[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[1;72H(B[0;7m*[119G(B[m[10;60r[10;1HM[1;63r[11;1H[?12l[?25h[?25l[10;60r[60;1H
+[1;63r[10;1H[?12l[?25h[?25l[?12l[?25h[11d[?25l7[11;60r8M[1;63r[12;1H[?12l[?25h[?25l[?12l[?25h[A[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h  r[?25l[?12l[?25he[?25l[?12l[?25ht[?25l[?12l[?25hu[?25l[61d[K[?12l[?25h[11;7Hr[?25l[?12l[?25h  [35mreturn[39m(B[m[?25l[?12l[?25h[42m [49m(B[m[?25l[?12l[?25h i[?25l[?12l[?25hn[?25l[?12l[?25hd[?25l[?12l[?25he[?25l[?12l[?25hx[?25l[?12l[?25h;[?25l[62;16H[15X[62;31H(B[0;7mM-D(B[m DOS Format       [62;61H(B[0;7mM-A(B[m Append[16X[62;93H(B[0;7mB(B[m Backup File[K[63;2H(B[0;7mC(B[m Cancel[16G[15X[63;31H(B[0;7mM-M(B[m Mac Format         [61G(B[0;7mM-P(B[m Prepend[19X[63;91H(B[0;7m^T(B[m Browse[K[61d(B[0;7mFile Name to Write: linear-search.c                                                                                     [61;36H(B[m[?12l[?25h[?25l[61;53H[1K (B[0;7m[ Writing... ](B[m[K[1;72H(B[0;7m [119G(B[m[61;52H(B[0;7m[ Wrote 11 lines ](B[m[62;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[62;61H(B[0;7m^T(B[m Execute     (B[0;7m^C(B[m Location[93G(B[0;7mU(B[m Undo       (B[0;7mM-A(B[m Set Mark[63;2H(B[0;7mX(B[m Exit  [16G(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify     (B[0;7m^/(B[m Go To Line  (B[0;7mM-E(B[m Redo [106G(B[0;7mM-6(B[m Copy[?12l[?25h[11;16H[?25l[61d[J[63d[?12l[?25h[63;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ nano linear-search.cmake[Knano linear-search.cmake[K
+[?2004lcc -g -Wall -std=c2x -O1   -c -o linear-search.o linear-search.c
+cc   linear-search.o main.o int_compare.o   -o linear-search
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ ./linear-search 100 1
+[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ ./tim[K[K[K[K[Ktime ./linear-search 2000 2000
+[?2004l
+real	0m4.292s
+user	0m4.280s
+sys	0m0.005s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ time ./binary-search 2000 2000
+[?2004l
+real	0m0.183s
+user	0m0.178s
+sys	0m0.000s
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/int-search[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/int-search[00m$ cd ../coverage
+[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ make
+[?2004lcc -g -Wall -std=c2x -fprofile-arcs -ftest-coverage    coverage.c   -o coverage
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l200 2000 2999compute(200, 2000, 2999) = 730
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ls -la
+[?2004ltotal 60
+drwxr-x--- 2 hbizier hbizier  4096 Apr 16 14:19 [0m[01;34m.[0m
+drwxr-x--- 6 hbizier hbizier  4096 Apr 16 13:48 [01;34m..[0m
+-rwxr-x--- 1 hbizier hbizier 29072 Apr 16 14:18 [01;32mcoverage[0m
+-rw-r----- 1 hbizier hbizier   781 Apr 16 13:45 coverage.c
+-rw-r----- 1 hbizier hbizier   204 Apr 16 14:19 coverage.gcda
+-rw-r----- 1 hbizier hbizier  1939 Apr 16 14:18 coverage.gcno
+-rw-r----- 1 hbizier hbizier    24 Apr 16 13:45 .gitignore
+-rw-r----- 1 hbizier hbizier   164 Apr 16 13:45 Makefile
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cd[K[Kgcov coverage.gcda
+[?2004lFile 'coverage.c'
+Lines executed:45.83% of 24
+Creating 'coverage.c.gcov'
+
+Lines executed:45.83% of 24
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c.c[Kgov
+[?2004lcat: coverage.c.gov: No such file or directory
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c.govcgov[C[1Pov[1Povgovcov
+[?2004l        -:    0:Source:coverage.c
+        -:    0:Graph:coverage.gcno
+        -:    0:Data:coverage.gcda
+        -:    0:Runs:1
+        -:    1:#include <stdio.h>
+        -:    2:
+        -:    3:static int v[] = {
+        -:    4:  211,  333, 319, 411, 911, 1001,
+        -:    5:};
+        -:    6:
+        1:    7:static int compute(int a, int b, int c) {
+        1:    8:  int s = v[2];
+       1*:    9:  if (v[0] < a && a < v[1]) {
+    #####:   10:    if (b < v[2]) { 
+    #####:   11:      s += v[2];
+    #####:   12:      if (c < v[3]) {
+    #####:   13:	s += v[4];
+        -:   14:      }
+        -:   15:      else {
+    #####:   16:	s += v[3];
+        -:   17:      }
+        -:   18:    }
+        -:   19:    else {
+    #####:   20:      s += v[1];
+    #####:   21:      if (c < v[1]) {
+    #####:   22:	s += v[4];
+        -:   23:      }
+        -:   24:      else {
+    #####:   25:	s += v[2];
+        -:   26:      }
+        -:   27:    }
+        -:   28:  }
+        -:   29:  else {
+        1:   30:    if (b < v[3]) {
+    #####:   31:      if (c < v[4]) {
+    #####:   32:	s += v[5];
+        -:   33:      }
+        -:   34:      else {
+    #####:   35:	s += v[1];
+        -:   36:      }
+        -:   37:    }
+        -:   38:    else {
+        1:   39:      if (c < v[2]) {
+    #####:   40:	s += v[1];
+        -:   41:      }
+        -:   42:      else {
+        1:   43:	s += v[3];
+        -:   44:      }
+        -:   45:    }
+        -:   46:  }
+        1:   47:  return s;
+        -:   48:}
+        -:   49:
+        -:   50:int 
+        1:   51:main()
+        -:   52:{
+        -:   53:  int a, b, c;
+        2:   54:  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+        1:   55:    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+        -:   56:  }
+        1:   57:  return 0;
+        -:   58:}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c
+[?2004l#include <stdio.h>
+
+static int v[] = {
+  211,  333, 319, 411, 911, 1001,
+};
+
+static int compute(int a, int b, int c) {
+  int s = v[2];
+  if (v[0] < a && a < v[1]) {
+    if (b < v[2]) { 
+      s += v[2];
+      if (c < v[3]) {
+	s += v[4];
+      }
+      else {
+	s += v[3];
+      }
+    }
+    else {
+      s += v[1];
+      if (c < v[1]) {
+	s += v[4];
+      }
+      else {
+	s += v[2];
+      }
+    }
+  }
+  else {
+    if (b < v[3]) {
+      if (c < v[4]) {
+	s += v[5];
+      }
+      else {
+	s += v[1];
+      }
+    }
+    else {
+      if (c < v[2]) {
+	s += v[1];
+      }
+      else {
+	s += v[3];
+      }
+    }
+  }
+  return s;
+}
+
+int 
+main()
+{
+  int a, b, c;
+  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+  }
+  return 0;
+}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c.gcov[1Povgcov coverage.gcda[12Pls -la./coverage
+[?2004l3 212 210
+^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^X^C
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l212 210 412
+compute(212, 210, 412) = 1049
+212 210       ^C
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l212 320 412
+compute(212, 320, 412) = 971
+212 320 410
+compute(212, 320, 410) = 971
+212 318 332
+compute(212, 318, 332) = 1549
+212 318 334
+compute(212, 318, 334) = 1549
+^X^C
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c
+[?2004l#include <stdio.h>
+
+static int v[] = {
+  211,  333, 319, 411, 911, 1001,
+};
+
+static int compute(int a, int b, int c) {
+  int s = v[2];
+  if (v[0] < a && a < v[1]) {
+    if (b < v[2]) { 
+      s += v[2];
+      if (c < v[3]) {
+	s += v[4];
+      }
+      else {
+	s += v[3];
+      }
+    }
+    else {
+      s += v[1];
+      if (c < v[1]) {
+	s += v[4];
+      }
+      else {
+	s += v[2];
+      }
+    }
+  }
+  else {
+    if (b < v[3]) {
+      if (c < v[4]) {
+	s += v[5];
+      }
+      else {
+	s += v[1];
+      }
+    }
+    else {
+      if (c < v[2]) {
+	s += v[1];
+      }
+      else {
+	s += v[3];
+      }
+    }
+  }
+  return s;
+}
+
+int 
+main()
+{
+  int a, b, c;
+  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+  }
+  return 0;
+}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c[4P./coveragecat coverage.c.gcov[1Povgcov coverage.gcda[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kls -la./coverage[6Pmake./coverage
+[?2004l211320    320 412
+compute(211, 320, 412) = 1320
+211 320 410
+compute(211, 320, 410) = 1320
+211 318 332
+compute(211, 318, 332) = 1320
+211 318 334
+compute(211, 318, 334) = 1320
+334 410 910
+compute(334, 410, 910) = 1320
+334 410 912
+compute(334, 410, 912) = 652
+334 118   412 910
+compute(334, 412, 910) = 730
+334 412 912
+compute(334, 412, 912) = 730
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ [7mgcov coverage.gcda[27mgcov coverage.gcda
+[?2004lFile 'coverage.c'
+Lines executed:58.33% of 24
+Creating 'coverage.c.gcov'
+
+Lines executed:58.33% of 24
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat [7mcoverage.c.gcov[27mcoverage.c.gcov
+[?2004l        -:    0:Source:coverage.c
+        -:    0:Graph:coverage.gcno
+        -:    0:Data:coverage.gcda
+        -:    0:Runs:2
+        -:    1:#include <stdio.h>
+        -:    2:
+        -:    3:static int v[] = {
+        -:    4:  211,  333, 319, 411, 911, 1001,
+        -:    5:};
+        -:    6:
+        9:    7:static int compute(int a, int b, int c) {
+        9:    8:  int s = v[2];
+        9:    9:  if (v[0] < a && a < v[1]) {
+    #####:   10:    if (b < v[2]) { 
+    #####:   11:      s += v[2];
+    #####:   12:      if (c < v[3]) {
+    #####:   13:	s += v[4];
+        -:   14:      }
+        -:   15:      else {
+    #####:   16:	s += v[3];
+        -:   17:      }
+        -:   18:    }
+        -:   19:    else {
+    #####:   20:      s += v[1];
+    #####:   21:      if (c < v[1]) {
+    #####:   22:	s += v[4];
+        -:   23:      }
+        -:   24:      else {
+    #####:   25:	s += v[2];
+        -:   26:      }
+        -:   27:    }
+        -:   28:  }
+        -:   29:  else {
+        9:   30:    if (b < v[3]) {
+        6:   31:      if (c < v[4]) {
+        5:   32:	s += v[5];
+        -:   33:      }
+        -:   34:      else {
+        1:   35:	s += v[1];
+        -:   36:      }
+        -:   37:    }
+        -:   38:    else {
+        3:   39:      if (c < v[2]) {
+    #####:   40:	s += v[1];
+        -:   41:      }
+        -:   42:      else {
+        3:   43:	s += v[3];
+        -:   44:      }
+        -:   45:    }
+        -:   46:  }
+        9:   47:  return s;
+        -:   48:}
+        -:   49:
+        -:   50:int 
+        2:   51:main()
+        -:   52:{
+        -:   53:  int a, b, c;
+       11:   54:  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+        9:   55:    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+        -:   56:  }
+        2:   57:  return 0;
+        -:   58:}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c.gcov[1Pgcov coverage.gcda[8P./coverage
+[?2004l12 12 12 12 12 12
+compute(12, 12, 12) = 1320
+compute(12, 12, 12) = 1320
+^[[A[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l211 320 412
+compute(211, 320, 412) = 1320
+211 320 410
+compute(211, 320, 410) = 1320
+211 318 332
+compute(211, 318, 332) = 1320
+211 318 334
+compute(211, 318, 334) = 1320
+334 410 910
+compute(334, 410, 910) = 1320
+334 410 912
+compute(334, 410, 912) = 652
+334 412 910
+compute(334, 412, 910) = 730
+334 412 912
+compute(334, 412, 912) = 730compute(211, 320, 412) = 1320
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ 211 320 410
+[?2004lbash: 211: command not found
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ compute(211, 320, 410) = 1320
+[?2004lbash: syntax error near unexpected token `211,'
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ 211 318 332
+[?2004lbash: 211: command not found
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ compute(211, 318, 332) = 1320
+[?2004lbash: syntax error near unexpected token `211,'
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ 211 318 334
+[?2004lbash: 211: command not found
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ compute(211, 318, 334) = 1320
+[?2004lbash: syntax error near unexpected token `211,'
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ 334 410 910
+[?2004lbash: 334: command not found
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ compute(334, 410, 910) = 1320
+[?2004lbash: syntax error near unexpected token `334,'
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ 334 410 912
+[?2004lbash: 334: command not found
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ compute(334, 410, 912) = 652
+[?2004lbash: syntax error near unexpected token `334,'
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ 334 412 910
+[?2004lbash: 334: command not found
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ compute(334, 412, 910) = 730
+[?2004lbash: syntax error near unexpected token `334,'
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ 334 412 912
+[?2004lbash: 334: command not found
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ compute(334, 412, 912) = 730
+[?2004lbash: syntax error near unexpected token `334,'
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ compute(334, 412, 912) = 730[17P334 412 912compute(334, 412, 910) = 730[17P334 412 910compute(334, 410, 912) = 652[K\[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K./coverage
+[?2004l2111  320 2 412 11  211 320 410
+compute(211, 320, 412) = 1320
+compute(211, 320, 410) = 1320
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l211 320 412 211 320 410 211 318 332 211 318 334 334 410 910 334 410 912 334 412 910 334 412 912
+compute(211, 320, 412) = 1320
+compute(211, 320, 410) = 1320
+compute(211, 318, 332) = 1320
+compute(211, 318, 334) = 1320
+compute(334, 410, 910) = 1320
+compute(334, 410, 912) = 652
+compute(334, 412, 910) = 730
+compute(334, 412, 912) = 730
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ [7mgcov coverage.gcda[27mgcov coverage.gcda
+[?2004lFile 'coverage.c'
+Lines executed:58.33% of 24
+Creating 'coverage.c.gcov'
+
+Lines executed:58.33% of 24
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./[7mcoverage.c.gcov[27m[1Pcoverage.c.gco[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kcat [7mcoverage.c.gcov[27mcoverage.c.gcov
+[?2004l        -:    0:Source:coverage.c
+        -:    0:Graph:coverage.gcno
+        -:    0:Data:coverage.gcda
+        -:    0:Runs:6
+        -:    1:#include <stdio.h>
+        -:    2:
+        -:    3:static int v[] = {
+        -:    4:  211,  333, 319, 411, 911, 1001,
+        -:    5:};
+        -:    6:
+       22:    7:static int compute(int a, int b, int c) {
+       22:    8:  int s = v[2];
+       22:    9:  if (v[0] < a && a < v[1]) {
+    #####:   10:    if (b < v[2]) { 
+    #####:   11:      s += v[2];
+    #####:   12:      if (c < v[3]) {
+    #####:   13:	s += v[4];
+        -:   14:      }
+        -:   15:      else {
+    #####:   16:	s += v[3];
+        -:   17:      }
+        -:   18:    }
+        -:   19:    else {
+    #####:   20:      s += v[1];
+    #####:   21:      if (c < v[1]) {
+    #####:   22:	s += v[4];
+        -:   23:      }
+        -:   24:      else {
+    #####:   25:	s += v[2];
+        -:   26:      }
+        -:   27:    }
+        -:   28:  }
+        -:   29:  else {
+       22:   30:    if (b < v[3]) {
+       17:   31:      if (c < v[4]) {
+       15:   32:	s += v[5];
+        -:   33:      }
+        -:   34:      else {
+        2:   35:	s += v[1];
+        -:   36:      }
+        -:   37:    }
+        -:   38:    else {
+        5:   39:      if (c < v[2]) {
+    #####:   40:	s += v[1];
+        -:   41:      }
+        -:   42:      else {
+        5:   43:	s += v[3];
+        -:   44:      }
+        -:   45:    }
+        -:   46:  }
+       22:   47:  return s;
+        -:   48:}
+        -:   49:
+        -:   50:int 
+        6:   51:main()
+        -:   52:{
+        -:   53:  int a, b, c;
+       28:   54:  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+       22:   55:    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+        -:   56:  }
+        6:   57:  return 0;
+        -:   58:}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c.gcov[1Pgcov coverage.gcda[8P./coverage
+[?2004l211 320 412 211 320 410 211 318 332 211 318 334 334 410 910 334 410 912 334 412 910 334 412 912
+compute(211, 320, 412) = 1320
+compute(211, 320, 410) = 1320
+compute(211, 318, 332) = 1320
+compute(211, 318, 334) = 1320
+compute(334, 410, 910) = 1320
+compute(334, 410, 912) = 652
+compute(334, 412, 910) = 730
+compute(334, 412, 912) = 730
+^C
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l211 320 412 211 320 410 211 318 332 211 318 334 334 410 910 334 410 912 334 412 910 334 412 912^[[D^[[D         2^[[D^C
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l21- 320     0 320 412 3 210 320 410 210 318 332 211 318 334 410 910 334 410 912 334 412 318 334 412 912compute(210, 320, 412) = 1320
+compute(210, 320, 410) = 1320
+compute(210, 318, 332) = 1320
+compute(211, 318, 334) = 1320
+compute(410, 910, 334) = 730
+compute(410, 912, 334) = 730
+compute(412, 318, 334) = 1320
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coveragecat coverage.c.gcov[1Pgcov coverage.gcda
+[?2004lFile 'coverage.c'
+Lines executed:58.33% of 24
+Creating 'coverage.c.gcov'
+
+Lines executed:58.33% of 24
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ gcov coverage.gcda[8P./coveragegcov coverage.gcda[8P./coveragecat coverage.c.gcov
+[?2004l        -:    0:Source:coverage.c
+        -:    0:Graph:coverage.gcno
+        -:    0:Data:coverage.gcda
+        -:    0:Runs:7
+        -:    1:#include <stdio.h>
+        -:    2:
+        -:    3:static int v[] = {
+        -:    4:  211,  333, 319, 411, 911, 1001,
+        -:    5:};
+        -:    6:
+       29:    7:static int compute(int a, int b, int c) {
+       29:    8:  int s = v[2];
+       29:    9:  if (v[0] < a && a < v[1]) {
+    #####:   10:    if (b < v[2]) { 
+    #####:   11:      s += v[2];
+    #####:   12:      if (c < v[3]) {
+    #####:   13:	s += v[4];
+        -:   14:      }
+        -:   15:      else {
+    #####:   16:	s += v[3];
+        -:   17:      }
+        -:   18:    }
+        -:   19:    else {
+    #####:   20:      s += v[1];
+    #####:   21:      if (c < v[1]) {
+    #####:   22:	s += v[4];
+        -:   23:      }
+        -:   24:      else {
+    #####:   25:	s += v[2];
+        -:   26:      }
+        -:   27:    }
+        -:   28:  }
+        -:   29:  else {
+       29:   30:    if (b < v[3]) {
+       22:   31:      if (c < v[4]) {
+       20:   32:	s += v[5];
+        -:   33:      }
+        -:   34:      else {
+        2:   35:	s += v[1];
+        -:   36:      }
+        -:   37:    }
+        -:   38:    else {
+        7:   39:      if (c < v[2]) {
+    #####:   40:	s += v[1];
+        -:   41:      }
+        -:   42:      else {
+        7:   43:	s += v[3];
+        -:   44:      }
+        -:   45:    }
+        -:   46:  }
+       29:   47:  return s;
+        -:   48:}
+        -:   49:
+        -:   50:int 
+        7:   51:main()
+        -:   52:{
+        -:   53:  int a, b, c;
+       36:   54:  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+       29:   55:    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+        -:   56:  }
+        7:   57:  return 0;
+        -:   58:}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ rm[K[Kcat coverage.c.gcov[1Pgcov coverage.gcda[8P./coveragecat coverage.c.gcov[1Pgcov coverage.gcdacat coverage.c.gcov[9P./coveragecat coverage.c.gcov[C\ coverage.c.gcov\ coverage.c.gcov\ coverage.c.gcov[1P coverage.c.gcov[1P coverage.c.gcov[1P coverage.c.gcov[1P coverage.c.gcov[1P coverage.c.gcov[1P coverage.c.gcovr coverage.c.gcovm coverage.c.gcov
+[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l210 320 412 210 320 410 210 318 332 211 318 334 410 910 334 410 912 334 412 318 334 412 912compute(210, 320, 412) = 1320
+compute(210, 320, 410) = 1320
+compute(210, 318, 332) = 1320
+compute(211, 318, 334) = 1320
+compute(410, 910, 334) = 730
+compute(410, 912, 334) = 730
+compute(412, 318, 334) = 1320
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coveragerm coverage.c.gcov[1@cat[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[?2004lcat: coverage.c.gcov: No such file or directory
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c.gcov[9P./coveragerm coverage.c.gcov[1@cat[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1Pgcov coverage.gcda
+[?2004lFile 'coverage.c'
+Lines executed:58.33% of 24
+Creating 'coverage.c.gcov'
+
+Lines executed:58.33% of 24
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ gcov coverage.gcdacat coverage.c.gcov
+[?2004l        -:    0:Source:coverage.c
+        -:    0:Graph:coverage.gcno
+        -:    0:Data:coverage.gcda
+        -:    0:Runs:8
+        -:    1:#include <stdio.h>
+        -:    2:
+        -:    3:static int v[] = {
+        -:    4:  211,  333, 319, 411, 911, 1001,
+        -:    5:};
+        -:    6:
+       36:    7:static int compute(int a, int b, int c) {
+       36:    8:  int s = v[2];
+       36:    9:  if (v[0] < a && a < v[1]) {
+    #####:   10:    if (b < v[2]) { 
+    #####:   11:      s += v[2];
+    #####:   12:      if (c < v[3]) {
+    #####:   13:	s += v[4];
+        -:   14:      }
+        -:   15:      else {
+    #####:   16:	s += v[3];
+        -:   17:      }
+        -:   18:    }
+        -:   19:    else {
+    #####:   20:      s += v[1];
+    #####:   21:      if (c < v[1]) {
+    #####:   22:	s += v[4];
+        -:   23:      }
+        -:   24:      else {
+    #####:   25:	s += v[2];
+        -:   26:      }
+        -:   27:    }
+        -:   28:  }
+        -:   29:  else {
+       36:   30:    if (b < v[3]) {
+       27:   31:      if (c < v[4]) {
+       25:   32:	s += v[5];
+        -:   33:      }
+        -:   34:      else {
+        2:   35:	s += v[1];
+        -:   36:      }
+        -:   37:    }
+        -:   38:    else {
+        9:   39:      if (c < v[2]) {
+    #####:   40:	s += v[1];
+        -:   41:      }
+        -:   42:      else {
+        9:   43:	s += v[3];
+        -:   44:      }
+        -:   45:    }
+        -:   46:  }
+       36:   47:  return s;
+        -:   48:}
+        -:   49:
+        -:   50:int 
+        8:   51:main()
+        -:   52:{
+        -:   53:  int a, b, c;
+       44:   54:  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+       36:   55:    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+        -:   56:  }
+        8:   57:  return 0;
+        -:   58:}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c.gcov[1Pgcov coverage.gcdacat coverage.c.gcov[9P./coverage
+[?2004l210 320 412 210 320 410 210 318 332 211 318 334 410 910 334 410 912 334 412 318 334 412 912
+compute(210, 320, 412) = 1320
+compute(210, 320, 410) = 1320
+compute(210, 318, 332) = 1320
+compute(211, 318, 334) = 1320
+compute(410, 910, 334) = 730
+compute(410, 912, 334) = 730
+compute(412, 318, 334) = 1320
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l212 320 412 212 320 410 212 318 332 211 318 334 410 910 334 410 912 334 412 318 334 412 912
+compute(212, 320, 412) = 971
+compute(212, 320, 410) = 971
+compute(212, 318, 332) = 1549
+compute(211, 318, 334) = 1320
+compute(410, 910, 334) = 730
+compute(410, 912, 334) = 730
+compute(412, 318, 334) = 1320
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coveragecat coverage.c.gcov[1Pgcov coverage.gcda
+[?2004lFile 'coverage.c'
+Lines executed:87.50% of 24
+Creating 'coverage.c.gcov'
+
+Lines executed:87.50% of 24
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ gcov coverage.gcda[8P./coveragecat coverage.c.gcov
+[?2004l        -:    0:Source:coverage.c
+        -:    0:Graph:coverage.gcno
+        -:    0:Data:coverage.gcda
+        -:    0:Runs:10
+        -:    1:#include <stdio.h>
+        -:    2:
+        -:    3:static int v[] = {
+        -:    4:  211,  333, 319, 411, 911, 1001,
+        -:    5:};
+        -:    6:
+       50:    7:static int compute(int a, int b, int c) {
+       50:    8:  int s = v[2];
+       50:    9:  if (v[0] < a && a < v[1]) {
+        3:   10:    if (b < v[2]) { 
+        1:   11:      s += v[2];
+        1:   12:      if (c < v[3]) {
+        1:   13:	s += v[4];
+        -:   14:      }
+        -:   15:      else {
+    #####:   16:	s += v[3];
+        -:   17:      }
+        -:   18:    }
+        -:   19:    else {
+        2:   20:      s += v[1];
+        2:   21:      if (c < v[1]) {
+    #####:   22:	s += v[4];
+        -:   23:      }
+        -:   24:      else {
+        2:   25:	s += v[2];
+        -:   26:      }
+        -:   27:    }
+        -:   28:  }
+        -:   29:  else {
+       47:   30:    if (b < v[3]) {
+       34:   31:      if (c < v[4]) {
+       32:   32:	s += v[5];
+        -:   33:      }
+        -:   34:      else {
+        2:   35:	s += v[1];
+        -:   36:      }
+        -:   37:    }
+        -:   38:    else {
+       13:   39:      if (c < v[2]) {
+    #####:   40:	s += v[1];
+        -:   41:      }
+        -:   42:      else {
+       13:   43:	s += v[3];
+        -:   44:      }
+        -:   45:    }
+        -:   46:  }
+       50:   47:  return s;
+        -:   48:}
+        -:   49:
+        -:   50:int 
+       10:   51:main()
+        -:   52:{
+        -:   53:  int a, b, c;
+       60:   54:  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+       50:   55:    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+        -:   56:  }
+       10:   57:  return 0;
+        -:   58:}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coverage
+[?2004l^[[A    212 318 410 212 318 412 212 320 332 211 320 334 410 910 334 410 912 334 412 318 318 412 318 320
+compute(212, 318, 410) = 1549
+compute(212, 318, 412) = 1049
+compute(212, 320, 332) = 1563
+compute(211, 320, 334) = 1320
+compute(410, 910, 334) = 730
+compute(410, 912, 334) = 730
+compute(412, 318, 318) = 1320
+compute(412, 318, 320) = 1320
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coveragecat coverage.c.gcov[1Pgcov coverage.gcda
+[?2004lFile 'coverage.c'
+Lines executed:95.83% of 24
+Creating 'coverage.c.gcov'
+
+Lines executed:95.83% of 24
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ gcov coverage.gcda[8P./coveragecat coverage.c.gcov
+[?2004l        -:    0:Source:coverage.c
+        -:    0:Graph:coverage.gcno
+        -:    0:Data:coverage.gcda
+        -:    0:Runs:11
+        -:    1:#include <stdio.h>
+        -:    2:
+        -:    3:static int v[] = {
+        -:    4:  211,  333, 319, 411, 911, 1001,
+        -:    5:};
+        -:    6:
+       58:    7:static int compute(int a, int b, int c) {
+       58:    8:  int s = v[2];
+       58:    9:  if (v[0] < a && a < v[1]) {
+        6:   10:    if (b < v[2]) { 
+        3:   11:      s += v[2];
+        3:   12:      if (c < v[3]) {
+        2:   13:	s += v[4];
+        -:   14:      }
+        -:   15:      else {
+        1:   16:	s += v[3];
+        -:   17:      }
+        -:   18:    }
+        -:   19:    else {
+        3:   20:      s += v[1];
+        3:   21:      if (c < v[1]) {
+        1:   22:	s += v[4];
+        -:   23:      }
+        -:   24:      else {
+        2:   25:	s += v[2];
+        -:   26:      }
+        -:   27:    }
+        -:   28:  }
+        -:   29:  else {
+       52:   30:    if (b < v[3]) {
+       37:   31:      if (c < v[4]) {
+       35:   32:	s += v[5];
+        -:   33:      }
+        -:   34:      else {
+        2:   35:	s += v[1];
+        -:   36:      }
+        -:   37:    }
+        -:   38:    else {
+       15:   39:      if (c < v[2]) {
+    #####:   40:	s += v[1];
+        -:   41:      }
+        -:   42:      else {
+       15:   43:	s += v[3];
+        -:   44:      }
+        -:   45:    }
+        -:   46:  }
+       58:   47:  return s;
+        -:   48:}
+        -:   49:
+        -:   50:int 
+       11:   51:main()
+        -:   52:{
+        -:   53:  int a, b, c;
+       69:   54:  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+       58:   55:    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+        -:   56:  }
+       11:   57:  return 0;
+        -:   58:}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ cat coverage.c.gcov[1Pgcov coverage.gcda[8P./coverage
+[?2004l212 318 410 212 318 412 212 320 332 211 320 334 410 910 334 410 912 334 412 412 318 412 318 320
+compute(212, 318, 410) = 1549
+compute(212, 318, 412) = 1049
+compute(212, 320, 332) = 1563
+compute(211, 320, 334) = 1320
+compute(410, 910, 334) = 730
+compute(410, 912, 334) = 730
+compute(412, 412, 318) = 652
+compute(412, 318, 320) = 1320
+./  [?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ 
+[?2004l[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ ./coveragecat coverage.c.gcov[1Pgcov coverage.gcda
+[?2004lFile 'coverage.c'
+Lines executed:100.00% of 24
+Creating 'coverage.c.gcov'
+
+Lines executed:100.00% of 24
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ gcov coverage.gcda[8P./coveragecat coverage.c.gcov
+[?2004l        -:    0:Source:coverage.c
+        -:    0:Graph:coverage.gcno
+        -:    0:Data:coverage.gcda
+        -:    0:Runs:12
+        -:    1:#include <stdio.h>
+        -:    2:
+        -:    3:static int v[] = {
+        -:    4:  211,  333, 319, 411, 911, 1001,
+        -:    5:};
+        -:    6:
+       66:    7:static int compute(int a, int b, int c) {
+       66:    8:  int s = v[2];
+       66:    9:  if (v[0] < a && a < v[1]) {
+        9:   10:    if (b < v[2]) { 
+        5:   11:      s += v[2];
+        5:   12:      if (c < v[3]) {
+        3:   13:	s += v[4];
+        -:   14:      }
+        -:   15:      else {
+        2:   16:	s += v[3];
+        -:   17:      }
+        -:   18:    }
+        -:   19:    else {
+        4:   20:      s += v[1];
+        4:   21:      if (c < v[1]) {
+        2:   22:	s += v[4];
+        -:   23:      }
+        -:   24:      else {
+        2:   25:	s += v[2];
+        -:   26:      }
+        -:   27:    }
+        -:   28:  }
+        -:   29:  else {
+       57:   30:    if (b < v[3]) {
+       39:   31:      if (c < v[4]) {
+       37:   32:	s += v[5];
+        -:   33:      }
+        -:   34:      else {
+        2:   35:	s += v[1];
+        -:   36:      }
+        -:   37:    }
+        -:   38:    else {
+       18:   39:      if (c < v[2]) {
+        1:   40:	s += v[1];
+        -:   41:      }
+        -:   42:      else {
+       17:   43:	s += v[3];
+        -:   44:      }
+        -:   45:    }
+        -:   46:  }
+       66:   47:  return s;
+        -:   48:}
+        -:   49:
+        -:   50:int 
+       12:   51:main()
+        -:   52:{
+        -:   53:  int a, b, c;
+       78:   54:  while (scanf("%d %d %d", &a, &b, &c) == 3) {
+       66:   55:    printf("compute(%d, %d, %d) = %d\n", a, b, c, compute(a, b, c));
+        -:   56:  }
+       12:   57:  return 0;
+        -:   58:}
+[?2004h]0;hbizier@remote04: ~/i220/submit/lab11-sol/coverage[01;32mhbizier@remote04[00m:[01;34m~/i220/submit/lab11-sol/coverage[00m$ [?2004l
+exit
+
+Script done on 2026-04-16 14:51:36-04:00 [COMMAND_EXIT_CODE="0"]
