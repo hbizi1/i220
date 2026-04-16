@@ -1,0 +1,10 @@
+*~
+*/*.o
+*/coverage
+*/*.gcda
+*/*.gcno
+*/linear-search
+*/binary-search
+*/simple-matmul
+*/transpose-matmulparity-c
+*/parity-s
