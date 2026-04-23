@@ -1,0 +1,13 @@
+*/*.o
+*/*~
+*/append
+*/file-char-count
+*/file-copy
+*/no-buffer-copy
+*/read-points
+*/write-points
+*/xread-points
+*/*.dat
+*/*.text
+*/stdin-char-count
+*/t
