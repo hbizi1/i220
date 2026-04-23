@@ -11,7 +11,13 @@
 static void
 read_binary_points(FILE *in, Point2 points[], size_t n_points)
 {
-  //TODO: add implementation
+  for (int i = 0; i < n_points; i++) {
+    if (fread(&points[i], sizeof(Point2), 1, in) != 1) {
+      fprintf(stderr, "cannot read  binary point %d: %s\n",
+              i, strerror(errno));
+      exit(1);
+    }
+  }
 }
 
 static void

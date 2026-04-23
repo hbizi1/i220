@@ -28,6 +28,10 @@ do_copy(const char *inName, FILE *in, const char *outName, FILE *out)
       return 1; //return rather than exit to ensure files closed
     }
   }
+  if(ferror(in)) {
+    fprintf(stderr, "i/o error reading from %s: %s\n", inName, strerror(errno));
+    return 2;
+  }
   return 0;
 }
 

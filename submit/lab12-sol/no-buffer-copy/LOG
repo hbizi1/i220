@@ -1,0 +1,15 @@
+Script started on 2026-04-23 15:21:51-04:00 [TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="141" LINES="65"]
+[?2004h]0;hbizier@remote03: ~/i220/submit/lab12-sol/no-buffer-copy[01;32mhbizier@remote03[00m:[01;34m~/i220/submit/lab12-sol/no-buffer-copy[00m$ [7mtime ./no-buffer-copy `which gcc` /dev/null 1[27mtime ./no-buffer-copy `which gcc` /dev/null 1
+[?2004l
+real	0m0.023s
+user	0m0.008s
+sys	0m0.007s
+[?2004h]0;hbizier@remote03: ~/i220/submit/lab12-sol/no-buffer-copy[01;32mhbizier@remote03[00m:[01;34m~/i220/submit/lab12-sol/no-buffer-copy[00m$ [7mtime ./no-buffer-copy `which gcc` /dev/null 0[27mtime ./no-buffer-copy `which gcc` /dev/null 0
+[?2004l
+real	0m1.201s
+user	0m0.224s
+sys	0m0.973s
+[?2004h]0;hbizier@remote03: ~/i220/submit/lab12-sol/no-buffer-copy[01;32mhbizier@remote03[00m:[01;34m~/i220/submit/lab12-sol/no-buffer-copy[00m$ [?2004l
+exit
+
+Script done on 2026-04-23 15:22:03-04:00 [COMMAND_EXIT_CODE="0"]

@@ -16,6 +16,10 @@ do_copy(const char *inName, FILE *in, const char *outName, FILE *out)
       return 1; //return rather than exit to ensure files closed
     }
   }
+  if(ferror(in)) {
+    fprintf(stderr, "i/o error reading from %s: %s\n", inName, strerror(errno));
+    return 2;
+  }
   return 0;
 }
 
@@ -36,7 +40,7 @@ main(int argc, const char *argv[])
     fprintf(stderr, "cannot read %s: %s\n", srcName, strerror(errno));
     exit(1);
   }
-  FILE *out = fopen(destName, "w");
+  FILE *out = fopen(destName, "a");
   if (!out) {
     fprintf(stderr, "cannot write %s: %s\n", destName, strerror(errno));
     exit(1);
