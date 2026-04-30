@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Low-Level I/O Lab: Scan Keys</title>
+    <style>
+      #keys {
+	border: 1px solid gray;
+	border-radius: 10px;
+	max-width: 400px;
+	min-height: 200px;
+      }
+      .key {
+        padding: 10px 15px;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        /* Simulates the 3D depth of a keycap */
+        box-shadow: 0 4px 0 #bbb;
+        cursor: pointer;
+        transition: all 0.1s ease;
+      }
+      #keypad {
+        padding: 20px 70px;
+      }
+      .highlight {
+        background-color: yellow;
+      }
+      .scan-val {
+	padding: 10px;
+      }
+      .output td {
+	text-align: center;
+	font-weight: lighter;
+      }
+      .clicked {
+	background-color: lightgray;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Reading a Soft Keyboard via Scanning</h1>
+
+    <p>
+      Pressing one of the buttons in the keypad below should show the
+      corresponding key in the area below:
+    </p>
+
+    <p>
+      The animation shows the scanning of the rows.  When a key is
+      pressed,
+      a <a href="https://en.wikipedia.org/wiki/One-hot">one-hot</a>
+      encoding of the row and column index will be passed to
+      the <tt>row</tt> and <tt>col</tt> fields of
+      the <tt>ScanKeys</tt> <code>struct</code> on the next scan.
+      Your code should decode these indexes to return the
+      corresponding <tt>char</tt> in the <tt>out</tt> field.
+    </p>
+
+    <table id="keypad">
+      <tr data-y="0">
+	<td class="scan-val">0</td>
+	<td><button class="key" data-x="0" data-y="0">1</button></td>
+	<td><button class="key" data-x="1" data-y="0">2</button></td>
+	<td><button class="key" data-x="2" data-y="0">3</button></td>
+      </tr>
+      <tr data-y="1">
+	<td class="scan-val">0</td>
+	<td><button class="key" data-x="0" data-y="1">4</button></td>
+	<td><button class="key" data-x="1" data-y="1">5</button></td>
+	<td><button class="key" data-x="2" data-y="1">6</button></td>
+      </tr>
+      <tr data-y="2">
+	<td class="scan-val">0</td>
+	<td><button class="key" data-x="0" data-y="2">7</button></td>
+	<td><button class="key" data-x="1" data-y="2">8</button></td>
+	<td><button class="key" data-x="2" data-y="2">9</button></td>
+      </tr>
+      <tr data-y="3">
+	<td class="scan-val">0</td>
+	<td><button class="key" data-x="0" data-y="3">*</button></td>
+	<td><button class="key" data-x="1" data-y="3">0</button></td>
+	<td><button class="key" data-x="2" data-y="3">#</button></td>
+      </tr>
+      <tr class="output">
+	<td></td>
+	<td data-x="0">0</td>
+	<td data-x="1">0</td>
+	<td data-x="2">0</td>
+      </tr>
+    </table>
+
+    <p id="keys" tabindex="0">
+    </p>
+
+
+    <script>
+      async function sendCoords(x, y, keys) {
+	//complicate student's life with 1-hot indexes!
+	const line = `${1 << y}|${1 << x}`; //row|col
+	const res = await fetch('/api/out-in-line', {
+	  method: 'POST',
+	  headers: {
+	    'Content-Type': 'application/json',
+	  },
+	  body: JSON.stringify({line}),
+	});
+	const line1 = (await res.json()).line;
+	const c = line1.trim()[0];
+	keys.append(c);
+      }
+      
+      function setup() {
+	const keys = document.querySelector('#keys');
+	const keypad = document.querySelector('#keypad');
+	let i = 0;
+	setInterval(() => {
+	  const row = keypad.querySelector(`tr[data-y="${i}"]`);
+	  const clicked = row.querySelector('.clicked');
+	  let x = -1;
+	  let y = i;
+	  if (clicked) {
+	    x = Number(clicked.getAttribute('data-x'));
+	    keypad.querySelector(`.output [data-x="${x}"]`).innerHTML = '1';
+	  }
+	  row.classList.toggle('highlight');
+	  const scanVal = row.querySelector('.scan-val');
+	  scanVal.innerHTML = '1';
+	  setTimeout(() => {
+	    if (clicked) {
+	      clicked.classList.remove('clicked');
+	      keypad.querySelector(`.output [data-x="${x}"]`).innerHTML = '0';
+	      sendCoords(x, y, keys);
+	    }
+	    row.classList.toggle('highlight');
+	    scanVal.innerHTML = 0;
+	  }, 1000);
+	  i = (i + 1)%4;
+	}, 2000);
+	keypad.querySelectorAll('.key')
+	  .forEach(k => k.addEventListener('click', () => {
+	    k.classList.add('clicked');
+	  }));	  
+      }
+      
+      document.addEventListener('DOMContentLoaded', setup);
+    </script>
+    
+  </body>
+</html>

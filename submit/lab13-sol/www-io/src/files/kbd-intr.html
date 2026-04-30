@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Low-Level I/O Lab: Keyboard Interrupt</title>
+    <style>
+      #keys {
+	border: 1px solid gray;
+	border-radius: 10px;
+	max-width: 400px;
+	min-height: 200px;
+      }      
+    </style>
+  </head>
+
+  <body>
+    <h1>Reading a Keyboard Key via an Interrupt</h1>
+
+    <p>
+      Typing a key into the following area should echo the key
+      with the case toggled.
+    </p>
+
+    <p id="keys" tabindex="0">
+    </p>
+
+    <script>
+      function setup() {
+	const keys = document.querySelector('#keys');
+	keys.addEventListener('keydown', async (ev) => {
+	  ev.preventDefault();
+	  const key = ev.key;
+	  if (key.length > 1) return;
+	  const res = await fetch('/api/out-in-line', {
+	    method: 'POST',
+	    headers: {
+	      'Content-Type': 'application/json',
+	    },
+	    body: JSON.stringify({"line": key}),
+	  });
+	  const line1 = (await res.json()).line;
+	  const c = line1.trim()[0];
+	  keys.append(c);
+	});
+	
+      }
+      
+      document.addEventListener('DOMContentLoaded', setup);
+    </script>
+    
+  </body>
+</html>

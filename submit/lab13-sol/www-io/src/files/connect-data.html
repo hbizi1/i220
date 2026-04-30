@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Low-Level I/O Lab: Connect Data</title>
+    <style>
+      #led {
+	border: 1px solid red;
+	border-radius: 10px;
+	background-color: white;
+      }
+
+      #led.active {
+	background-color: red;
+      }
+      
+    </style>
+  </head>
+
+  <body>
+    <h1>Copying Input Data to Output Data in a Busy-Wait Loop</h1>
+
+    <p>
+      Each press of the following button should toggle the
+      display of the rectangle next to it.
+    </p>
+
+    <p>
+      <button id="toggle">Toggle Me</button>
+      <span id="led">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    </p>
+
+    <script>
+      function setup() {
+	document.querySelector('#toggle').addEventListener('click', async () => {
+	  const res = await fetch('/api/out-in-line', {
+	    method: 'POST',
+	    headers: {
+	      'Content-Type': 'application/json',
+	    },
+	    body: JSON.stringify({"line": ""}),
+	  });
+	  const line1 = (await res.json()).line;
+	  const led = document.querySelector('#led');
+	  if (line1.trim().startsWith("1")) {
+	    led.classList.add('active');
+	  }
+	  else {
+	    led.classList.remove('active');
+	  }
+	});
+      }
+      
+      document.addEventListener('DOMContentLoaded', setup);
+    </script>
+    
+  </body>
+</html>
