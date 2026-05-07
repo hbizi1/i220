@@ -1,0 +1,155 @@
+# show usage message
+$ ./cache-sim 
+usage: ./cache-sim [-r lru|mru|rand] [-s seed] [-q] m-s-b-E
+where m-s-b-E specified cache parameters:
+  m: total # of bits used to address memory
+  s: # of bits in address used to specify set index
+  b: # of bits in address used to specify offset in cache block
+  E: # of cache lines per set
+  must have all non-negative and 2 <= b and b + s < m
+
+# run on provided test file
+$ ./cache-sim 8-2-2-2 < \
+     ~/cs220/projects/prj5/extras/tests/lru_8-2-2-2_custom.test
+0x10 r: m
+0x20 r: m
+0x30 w: M 0x10
+0x22 r: h
+0x16 r: m
+0x12 w: M 0x30 w
+0x14 w: h
+0x1c r: m
+0x2e r: m
+0x1f w: h
+0x3d r: M 0x2c
+0x26 r: m
+0x2a w: m
+0x8a w: m
+0x7b r: M 0x28 w
+0x46 r: M 0x14 w
+# hits:                        3/16 (18.75%)
+# misses without replace:      8/16 (50.00%)
+# misses with replace:         5/16 (31.25%)
+# dirty writes:                3/16 (18.75%)
+
+# define a shell variable to avoid typing in long paths repeatedly
+$ PRJ5_EXTRAS=$HOME/cs220/projects/prj5/extras
+
+# run MRU cache-sim on test file; note that -q outputs only statistics
+$ ./cache-sim -r mru -q 16-4-8-2 < $PRJ5_EXTRAS/tests/mru_16-4-8-2_custom.test
+# hits:                        5/18 (27.78%)
+# misses without replace:      4/18 (22.22%)
+# misses with replace:         9/18 (50.00%)
+# dirty writes:                6/18 (33.33%)
+
+# show usage for gen-addr-trace.mjs script
+$ $PRJ5_EXTRAS/gen-addr-trace.mjs 
+usage: gen-addr-trace.mjs MODE OPTIONS...
+MODE is either stride or program or random or test.
+  General Options:
+    --len | -n:       # of address traces; default 100
+    --lo-addr | -l:   low base address in hex; default 0x1000
+    --mem | -m:       total memory size; optional suffix k, m, g; default 64k
+  MODE stride: generate trace with specific stride through memory; Options:
+    --stride | -r:    # of bytes over which to stride; default 4
+    --write | -w:     probability of a write access; default 0.4
+  MODE program: generate read-only typical program trace; Options:
+    --jump-prob | -j: probability of taking intra-function jump; default 0.1
+    --call-prob | -c: probability of call/return; default 0.04
+  MODE random: generate random trace; Options:
+    --write | -w:     probability of a write access; default 0.2
+  MODE test: generate test trace for systematically testing cache; Options:
+    --blk | -b:       # of bits in block offset; default 4
+    --set | -s:       # of bits in set index; default 4
+    --ways | -E:      # of ways in set; default 2
+
+# run LRU cache-sim on test trace of length 20
+$ $PRJ5_EXTRAS/gen-addr-trace.mjs test -n 20 | ./cache-sim 16-4-4-2
+0x0000 w: m
+0x0011 r: m
+0x0102 r: m
+0x0113 w: m
+0x0204 r: M 0x0000 w
+0x0215 r: M 0x0010
+0x0306 w: M 0x0100
+0x0317 r: M 0x0110 w
+0x0028 r: m
+0x0039 w: m
+0x012a r: m
+0x013b r: m
+0x022c w: M 0x0020
+0x023d r: M 0x0030 w
+0x032e r: M 0x0120
+0x033f w: M 0x0130
+0x0040 w: m
+0x0051 r: m
+0x0142 r: m
+0x0153 w: m
+0x0253 w: M 0x0050
+0x0353 w: M 0x0150 w
+0x0073 w: m
+0x0173 w: m
+0x0273 w: M 0x0070 w
+0x0373 w: M 0x0170 w
+0x0093 w: m
+0x0193 w: m
+0x0293 w: M 0x0090 w
+0x0393 w: M 0x0190 w
+0x00b3 w: m
+0x01b3 w: m
+0x02b3 w: M 0x00b0 w
+0x03b3 w: M 0x01b0 w
+0x00d3 w: m
+0x01d3 w: m
+0x02d3 w: M 0x00d0 w
+0x03d3 w: M 0x01d0 w
+0x00f3 w: m
+0x01f3 w: m
+0x02f3 w: M 0x00f0 w
+0x03f3 w: M 0x01f0 w
+# hits:                        0/42 (0.00%)
+# misses without replace:      22/42 (52.38%)
+# misses with replace:         20/42 (47.62%)
+# dirty writes:                14/42 (33.33%)
+
+# run LRU cache-sim on a 10000 long test trace having a stride of 4
+$ $PRJ5_EXTRAS/gen-addr-trace.mjs stride -n 10000 --stride 4 | \
+     ./cache-sim -q 16-4-4-2
+# hits:                        7500/10000 (75.00%)
+# misses without replace:      32/10000 (0.32%)
+# misses with replace:         2468/10000 (24.68%)
+# dirty writes:                2131/10000 (21.31%)
+
+# run LRU cache-sim on a 10000 long test trace having a stride of 1000
+# note terrible results
+$ $PRJ5_EXTRAS/gen-addr-trace.mjs stride -n 10000 --stride 1000 | \
+     ./cache-sim -q 16-4-4-2
+# hits:                        0/10000 (0.00%)
+# misses without replace:      32/10000 (0.32%)
+# misses with replace:         9968/10000 (99.68%)
+# dirty writes:                4049/10000 (40.49%)
+
+# run LRU cache-sim on a 10000 long program trace
+$ $PRJ5_EXTRAS/gen-addr-trace.mjs program -n 10000 | ./cache-sim -q 16-4-4-2
+# hits:                        7083/10000 (70.83%)
+# misses without replace:      32/10000 (0.32%)
+# misses with replace:         2885/10000 (28.85%)
+# dirty writes:                0/10000 (0.00%)
+
+# run MRU cache-sim on a 1000 long program trace.
+# note worse results than LRU.
+04-23T09:40:39|main/prj5-sol $ $PRJ5_EXTRAS/gen-addr-trace.mjs program -n 10000 | ./cache-sim -r mru -q 16-4-4-2
+# hits:                        6409/10000 (64.09%)
+# misses without replace:      32/10000 (0.32%)
+# misses with replace:         3559/10000 (35.59%)
+# dirty writes:                0/10000 (0.00%)
+
+# run RAND cache-sim on a 10000 long program trace
+# worse results than LRU but better than MRU
+$ $PRJ5_EXTRAS/gen-addr-trace.mjs program -n 10000 | \
+    ./cache-sim -r rand -q 16-4-4-2
+# hits:                        6823/10000 (68.23%)
+# misses without replace:      32/10000 (0.32%)
+# misses with replace:         3145/10000 (31.45%)
+# dirty writes:                0/10000 (0.00%)
+$
